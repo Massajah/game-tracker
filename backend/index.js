@@ -6,6 +6,7 @@ const Game = require("./models/Game");
 const gameRoutes = require("./routes/gameRoutes");
 const cors = require("cors");
 const aiRoutes = require("./routes/aiRoutes");
+const authRoutes = require("./routes/authRoutes");
 
 const app = express();
 
@@ -13,6 +14,7 @@ app.use(cors());
 app.use(express.json());
 app.use("/ai", aiRoutes);
 app.use("/games", gameRoutes);
+app.use("/auth", authRoutes);
 
 // connect database
 connectDB();
