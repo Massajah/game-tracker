@@ -6,6 +6,9 @@ const {
   updateGame,
   deleteGame
 } = require("../controllers/gameController");
+const authMiddleware = require("../middleware/authMiddleware");
+
+router.use(authMiddleware);
 
 router.get("/", getGames);
 router.post("/", createGame);

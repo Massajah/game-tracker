@@ -2,7 +2,7 @@ const Game = require("../models/Game");
 
 exports.getGames = async (req, res) => {
   try {
-    const games = await Game.find().sort({ createdAt: -1 });
+    const games = await Game.find({ userId: req.user.userId }).sort({ createdAt: -1 });
     res.json(games);
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -12,6 +12,7 @@ exports.getGames = async (req, res) => {
 exports.createGame = async (req, res) => {
   try {
     const { title, status, rawgId, image } = req.body;
+    const { userId } = req.user;
 
     if (!title || !title.trim()) {
       return res.status(400).json({ error: "Title is required" });
@@ -20,10 +21,11 @@ exports.createGame = async (req, res) => {
     let existingGame = null;
 
     if (rawgId) {
-      existingGame = await Game.findOne({ rawgId });
+      existingGame = await Game.findOne({ rawgId, userId });
     } else {
       existingGame = await Game.findOne({
         title: title.trim(),
+        userId,
       });
     }
 
@@ -34,6 +36,7 @@ exports.createGame = async (req, res) => {
     }
 
     const game = new Game({
+      userId,
       title: title.trim(),
       status,
       rawgId: rawgId || null,
@@ -65,8 +68,8 @@ exports.updateGame = async (req, res) => {
       updateData.notes = notes;
     }
 
-    const updatedGame = await Game.findByIdAndUpdate(
-      req.params.id,
+    const updatedGame = await Game.findOneAndUpdate(
+      { _id: req.params.id, userId: req.user.userId },
       updateData,
       { new: true, runValidators: true }
     );
@@ -83,7 +86,15 @@ exports.updateGame = async (req, res) => {
 
 exports.deleteGame = async (req, res) => {
   try {
-    await Game.findByIdAndDelete(req.params.id);
+    const deletedGame = await Game.findOneAndDelete({
+      _id: req.params.id,
+      userId: req.user.userId,
+    });
+
+    if (!deletedGame) {
+      return res.status(404).json({ error: "Game not found" });
+    }
+
     res.json({ message: "Game deleted" });
   } catch (error) {
     res.status(500).json({ error: error.message });
