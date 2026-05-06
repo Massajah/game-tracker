@@ -2162,7 +2162,7 @@ body.dark .secondary-button:hover {
   display: flex;
   align-items: center;
   gap: 12px;
-  color: #9ca3af;
+  color: #5e5e5e;
   font-size: 0.9rem;
   margin: 6px 0;
 }
@@ -2191,5 +2191,60 @@ body.dark .secondary-button:hover {
   .main-content {
     margin-left: 240px;
     width: calc(100% - 240px);
+  }
+}
+
+.google-login-wrapper {
+  width: 100%;
+  margin-bottom: 18px;
+}
+
+.google-login-wrapper > div {
+  width: 100% !important;
+}
+
+.auth-divider {
+  margin: 16px 0;
+  font-size: 0.8rem;
+  opacity: 0.7;
+}
+
+.auth-card {
+  box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+}
+
+.hero-title span {
+  color: #3b82f6;
+}
+
+.auth-error {
+  background: rgba(255, 0, 0, 0.1);
+  color: #ef4444;
+  padding: 8px 12px;
+  border-radius: 8px;
+  margin-bottom: 10px;
+}
+
+.auth-card {
+  width: 440px;
+  max-width: 100%;
+  padding: 40px;
+  border-radius: 24px;
+  background: white;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+}
+
+.auth-card form {
+  margin-top: 20px;
+}
+
+.auth-card h2 {
+  margin-bottom: 10px;
+}
+
+@media (max-width: 768px) {
+  .auth-card {
+    width: 100%;
+    padding: 28px;
   }
 }

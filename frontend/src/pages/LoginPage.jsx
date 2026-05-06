@@ -84,20 +84,23 @@ useEffect(() => {
   window.google.accounts.id.initialize({
     client_id: process.env.REACT_APP_GOOGLE_CLIENT_ID,
     callback: handleGoogleResponse,
+    locale: "en",
   });
 
   window.google.accounts.id.renderButton(googleButtonRef.current, {
-    theme: "outline",
-    size: "large",
-    width: 320,
-  });
+  theme: "outline",
+  size: "large",
+  width: googleButtonRef.current.offsetWidth,
+});
 }, [handleGoogleResponse]);
 
   return (
     <div className="auth-page">
     <div className="auth-hero">
       <div className="auth-hero-badge">🎮 GameTracker</div>
-      <h1>Track your games. Find what to play next.</h1>
+      <h1>
+        Track your games. <span>Find what to play next.</span>
+      </h1>
       <p>
         Build your personal game library, manage your backlog, rate completed
         games, and get AI-powered recommendations.
