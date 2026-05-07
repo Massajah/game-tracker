@@ -2,7 +2,10 @@ const Game = require("../models/Game");
 
 exports.getGames = async (req, res) => {
   try {
-    const games = await Game.find({ userId: req.user.userId }).sort({ createdAt: -1 });
+    const games = await Game.find({ userId: req.user.userId }).sort({
+      createdAt: -1,
+    });
+
     res.json(games);
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -11,7 +14,16 @@ exports.getGames = async (req, res) => {
 
 exports.createGame = async (req, res) => {
   try {
-    const { title, status, rawgId, image } = req.body;
+    const {
+       title, 
+       status, 
+       rawgId, 
+       image, 
+       released, 
+       metacritic, 
+       genres, 
+       platforms 
+      } = req.body;
     const { userId } = req.user;
 
     if (!title || !title.trim()) {
@@ -41,6 +53,10 @@ exports.createGame = async (req, res) => {
       status,
       rawgId: rawgId || null,
       image: image || "",
+      released: released || null,
+      metacritic: metacritic || null,
+      genres: genres || [],
+      platforms: platforms || [],
     });
 
     await game.save();
@@ -53,7 +69,6 @@ exports.createGame = async (req, res) => {
 exports.updateGame = async (req, res) => {
   try {
     const { status, userRating, notes } = req.body;
-
     const updateData = {};
 
     if (status !== undefined) {

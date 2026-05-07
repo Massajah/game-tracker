@@ -20,15 +20,12 @@ function Sidebar({ user, logout, stats, theme, setTheme }) {
           className="mobile-menu-button"
           onClick={() => setMobileMenuOpen(true)}
         >
-          ☰
+          Menu
         </button>
       </div>
 
       {mobileMenuOpen && (
-        <div
-          className="mobile-menu-overlay"
-          onClick={closeMobileMenu}
-        />
+        <div className="mobile-menu-overlay" onClick={closeMobileMenu} />
       )}
 
       <aside className={`sidebar ${mobileMenuOpen ? "mobile-open" : ""}`}>
@@ -43,11 +40,21 @@ function Sidebar({ user, logout, stats, theme, setTheme }) {
           </div>
 
           <nav className="sidebar-nav">
-            <NavLink to="/" onClick={closeMobileMenu}>Home</NavLink>
-            <NavLink to="/wishlist" onClick={closeMobileMenu}>Wishlist</NavLink>
-            <NavLink to="/backlog" onClick={closeMobileMenu}>Backlog</NavLink>
-            <NavLink to="/playing" onClick={closeMobileMenu}>Playing</NavLink>
-            <NavLink to="/completed" onClick={closeMobileMenu}>Completed</NavLink>
+            <NavLink to="/" onClick={closeMobileMenu}>
+              Home
+            </NavLink>
+            <NavLink to="/wishlist" onClick={closeMobileMenu}>
+              Wishlist
+            </NavLink>
+            <NavLink to="/backlog" onClick={closeMobileMenu}>
+              Backlog
+            </NavLink>
+            <NavLink to="/playing" onClick={closeMobileMenu}>
+              Playing
+            </NavLink>
+            <NavLink to="/completed" onClick={closeMobileMenu}>
+              Completed
+            </NavLink>
           </nav>
 
           {stats && (
@@ -82,7 +89,7 @@ function Sidebar({ user, logout, stats, theme, setTheme }) {
               </div>
 
               <div className="sidebar-rating">
-                <span>⭐ Avg rating</span>
+                <span>Avg rating</span>
                 <strong>{stats.averageRating}</strong>
               </div>
             </div>

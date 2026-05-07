@@ -1,12 +1,13 @@
 const express = require("express");
-const router = express.Router();
 const {
   getGames,
   createGame,
   updateGame,
-  deleteGame
+  deleteGame,
 } = require("../controllers/gameController");
 const authMiddleware = require("../middleware/authMiddleware");
+
+const router = express.Router();
 
 router.use(authMiddleware);
 

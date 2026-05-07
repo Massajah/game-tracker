@@ -1,0 +1,68 @@
+.top-bar,
+.dashboard-panel,
+.game-card,
+.home-mini-card,
+.game-modal,
+.auth-card {
+  background: var(--card-bg);
+  color: var(--text-main);
+}
+
+.page-subtitle,
+.empty-text,
+.game-card-status,
+.home-mini-card-content p,
+.top-rated-item-content p,
+.ai-placeholder p,
+.ai-recommendation-card p {
+  color: var(--text-muted);
+}
+
+.sub-panel,
+.ai-placeholder,
+.ai-recommendation-card,
+.top-rated-item {
+  background: var(--sub-panel-bg);
+  color: var(--text-main);
+  border-color: var(--border-color);
+}
+
+/* Dark mode overrides */
+body.dark .sidebar {
+  background: #111827;
+}
+
+body.dark .sidebar-stats {
+  background: rgba(255, 255, 255, 0.06);
+}
+
+body.dark input,
+body.dark select,
+body.dark textarea {
+  background: #f8fafc;
+  color: #111827;
+}
+
+body.dark .section-subtitle,
+body.dark .game-section-title,
+body.dark .recommendation-subtitle {
+  color: #e5e7eb;
+}
+
+body.dark h3,
+body.dark h4 {
+  color: #e5e7eb;
+}
+
+body.dark .secondary-button {
+  background: rgba(37, 99, 235, 0.15);
+  color: #93c5fd;
+  border: 1px solid rgba(37, 99, 235, 0.4);
+}
+
+body.dark .secondary-button:hover {
+  background: rgba(37, 99, 235, 0.25);
+  color: #bfdbfe;
+  box-shadow: 0 0 0 1px rgba(59, 130, 246, 0.4),
+              0 4px 12px rgba(37, 99, 235, 0.2);
+}

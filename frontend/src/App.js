@@ -1,17 +1,15 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import axios from "axios";
-import "./App.css";
+import { Navigate, Route, Routes, useLocation } from "react-router-dom";
 import SearchBar from "./components/SearchBar";
 import GameDetailsModal from "./components/GameDetailsModal";
-import { Routes, Route } from "react-router-dom";
 import Sidebar from "./components/Sidebar";
 import Header from "./components/Header";
 import HomePage from "./pages/HomePage";
 import StatusPage from "./pages/StatusPage";
 import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
-import { Navigate } from "react-router-dom";
-import { useLocation } from "react-router-dom";
+import "./App.css";
 
 const ProtectedRoute = ({ token, children }) => {
   if (!token) {
@@ -32,30 +30,23 @@ function App() {
     const savedUser = localStorage.getItem("user");
     return savedUser ? JSON.parse(savedUser) : null;
   });
-
-  const [token, setToken] = useState(() => {
-    return localStorage.getItem("token");
-  });
-
+  const [token, setToken] = useState(() => localStorage.getItem("token"));
   const [theme, setTheme] = useState(() => {
     return localStorage.getItem("theme") || "light";
   });
 
-useEffect(() => {
-  document.body.className = theme;
-  localStorage.setItem("theme", theme);
-}, [theme]);
-
   const location = useLocation();
-
   const isAuthPage =
     location.pathname === "/login" || location.pathname === "/register";
 
-  const getAuthConfig = useCallback(() => ({
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  }), [token]);
+  const getAuthConfig = useCallback(
+    () => ({
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }),
+    [token]
+  );
 
   const fetchGames = useCallback(async () => {
     if (!token) {
@@ -68,9 +59,13 @@ useEffect(() => {
   }, [getAuthConfig, token]);
 
   useEffect(() => {
+    document.body.className = theme;
+    localStorage.setItem("theme", theme);
+  }, [theme]);
+
+  useEffect(() => {
     fetchGames();
   }, [fetchGames]);
-
 
   const addGame = async () => {
     if (!title.trim()) return;
@@ -98,11 +93,15 @@ useEffect(() => {
           rawgId: game.id,
           image: game.background_image,
           status: selectedStatus,
+          released: game.released || null,
+          metacritic: game.metacritic || null,
+          genres: game.genres?.map((genre) => genre.name) || [],
+          platforms: game.platforms?.map((p) => p.platform.name) || [],
         },
         getAuthConfig()
       );
 
-      fetchGames();
+      await fetchGames();
 
       return { success: true };
     } catch (error) {
@@ -137,215 +136,210 @@ useEffect(() => {
   };
 
   const openGameDetails = async (game) => {
-  setSelectedGame(game);
-  setGameDetails(null);
-
-  if (!game.rawgId) return;
-
-  try {
-    setDetailsLoading(true);
-
-    const res = await axios.get(
-      `https://api.rawg.io/api/games/${game.rawgId}?key=${process.env.REACT_APP_RAWG_API_KEY}`
-    );
-
-    setGameDetails(res.data);
-  } catch (error) {
-    console.error("Failed to fetch game details:", error);
+    setSelectedGame(game);
     setGameDetails(null);
-  } finally {
+
+    if (!game.rawgId) return;
+
+    try {
+      setDetailsLoading(true);
+
+      const res = await axios.get(
+        `https://api.rawg.io/api/games/${game.rawgId}?key=${process.env.REACT_APP_RAWG_API_KEY}`
+      );
+
+      setGameDetails(res.data);
+    } catch {
+      setGameDetails(null);
+    } finally {
+      setDetailsLoading(false);
+    }
+  };
+
+  const closeGameDetails = () => {
+    setSelectedGame(null);
+    setGameDetails(null);
     setDetailsLoading(false);
-  }
-};
+  };
 
-const closeGameDetails = () => {
-  setSelectedGame(null);
-  setGameDetails(null);
-  setDetailsLoading(false);
-};
+  const saveGameReview = async (id, userRating, notes) => {
+    try {
+      const res = await axios.put(
+        `http://localhost:5000/games/${id}`,
+        {
+          userRating,
+          notes,
+        },
+        getAuthConfig()
+      );
 
-const saveGameReview = async (id, userRating, notes) => {
-  try {
-    const res = await axios.put(
-      `http://localhost:5000/games/${id}`,
-      {
-        userRating,
-        notes,
-      },
-      getAuthConfig()
-    );
+      setGames((prevGames) =>
+        prevGames.map((game) => (game._id === id ? res.data : game))
+      );
+      setSelectedGame(res.data);
 
-    setGames((prevGames) =>
-      prevGames.map((game) =>
-        game._id === id ? res.data : game
-      )
-    );
+      return { success: true };
+    } catch {
+      return {
+        success: false,
+        message: "Failed to save review",
+      };
+    }
+  };
 
-    setSelectedGame(res.data);
-
-    return { success: true };
-  } catch (error) {
-    console.error("Failed to save review:", error);
-    return {
-      success: false,
-      message: "Failed to save review",
-    };
-  }
-};
-
-const logout = () => {
+  const logout = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("user");
     setToken(null);
     setUser(null);
   };
 
-  const stats = {
-  total: games.length,
-  wishlist: games.filter((game) => game.status === "wishlist").length,
-  backlog: games.filter((game) => game.status === "backlog").length,
-  playing: games.filter((game) => game.status === "playing").length,
-  completed: games.filter((game) => game.status === "completed").length,
-  averageRating:
-    games.filter((game) => game.userRating).length > 0
-      ? (
-          games
-            .filter((game) => game.userRating)
-            .reduce((sum, game) => sum + game.userRating, 0) /
-          games.filter((game) => game.userRating).length
-        ).toFixed(1)
-      : "-",
-};
+  const stats = useMemo(() => {
+    const ratedGames = games.filter((game) => game.userRating);
+
+    return {
+      total: games.length,
+      wishlist: games.filter((game) => game.status === "wishlist").length,
+      backlog: games.filter((game) => game.status === "backlog").length,
+      playing: games.filter((game) => game.status === "playing").length,
+      completed: games.filter((game) => game.status === "completed").length,
+      averageRating:
+        ratedGames.length > 0
+          ? (
+              ratedGames.reduce((sum, game) => sum + game.userRating, 0) /
+              ratedGames.length
+            ).toFixed(1)
+          : "-",
+    };
+  }, [games]);
 
   return (
-  <div className={isAuthPage ? "auth-layout" : "app-layout"}>
-  {!isAuthPage && 
-    <Sidebar 
-      user={user} 
-      logout={logout} 
-      stats={stats}
-      theme={theme}
-      setTheme={setTheme}
-    />}
-
-    <main className={isAuthPage ? "auth-main" : "main-content"}>
+    <div className={isAuthPage ? "auth-layout" : "app-layout"}>
       {!isAuthPage && (
-        <>
-          <Header />
-
-          <div className="top-bar">
-            <SearchBar
-              addFromAPI={addFromAPI}
-              games={games}
-              manualTitle={title}
-              setManualTitle={setTitle}
-              manualStatus={status}
-              setManualStatus={setStatus}
-              addManualGame={addGame}
-            />
-          </div>
-        </>
+        <Sidebar
+          user={user}
+          logout={logout}
+          stats={stats}
+          theme={theme}
+          setTheme={setTheme}
+        />
       )}
 
-      <Routes>
+      <main className={isAuthPage ? "auth-main" : "main-content"}>
+        {!isAuthPage && (
+          <>
+            <Header />
 
-      <Route 
-        path="/login" 
-        element={<LoginPage setUser={setUser} setToken={setToken} />} />
+            <div className="top-bar">
+              <SearchBar
+                addFromAPI={addFromAPI}
+                games={games}
+                manualTitle={title}
+                setManualTitle={setTitle}
+                manualStatus={status}
+                setManualStatus={setStatus}
+                addManualGame={addGame}
+              />
+            </div>
+          </>
+        )}
 
-      <Route
-      path="/register"
-      element={<RegisterPage />} />
+        <Routes>
+          <Route
+            path="/login"
+            element={<LoginPage setUser={setUser} setToken={setToken} />}
+          />
 
-        <Route
-          path="/"
-          element={
-            <ProtectedRoute token={token}>
-            <HomePage
-              games={games}
-              openGameDetails={openGameDetails}
-              fetchGames={fetchGames}
-              token={token}
-            />
-            </ProtectedRoute>
-          }
-        />
+          <Route path="/register" element={<RegisterPage />} />
 
-        <Route
-          path="/wishlist"
-          element={
-            <ProtectedRoute token={token}>
-            <StatusPage
-              title="Wishlist"
-              status="wishlist"
-              games={games}
-              updateStatus={updateStatus}
-              deleteGame={deleteGame}
-              openGameDetails={openGameDetails}
-            />
-            </ProtectedRoute>
-          }
-        />
+          <Route
+            path="/"
+            element={
+              <ProtectedRoute token={token}>
+                <HomePage
+                  games={games}
+                  openGameDetails={openGameDetails}
+                  fetchGames={fetchGames}
+                />
+              </ProtectedRoute>
+            }
+          />
 
-        <Route
-          path="/backlog"
-          element={
-            <ProtectedRoute token={token}>
-            <StatusPage
-              title="Backlog"
-              status="backlog"
-              games={games}
-              updateStatus={updateStatus}
-              deleteGame={deleteGame}
-              openGameDetails={openGameDetails}
-            />
-            </ProtectedRoute>
-          }
-        />
+          <Route
+            path="/wishlist"
+            element={
+              <ProtectedRoute token={token}>
+                <StatusPage
+                  title="Wishlist"
+                  status="wishlist"
+                  games={games}
+                  updateStatus={updateStatus}
+                  deleteGame={deleteGame}
+                  openGameDetails={openGameDetails}
+                />
+              </ProtectedRoute>
+            }
+          />
 
-        <Route
-          path="/playing"
-          element={
-            <ProtectedRoute token={token}>
-            <StatusPage
-              title="Playing"
-              status="playing"
-              games={games}
-              updateStatus={updateStatus}
-              deleteGame={deleteGame}
-              openGameDetails={openGameDetails}
-            />
-            </ProtectedRoute>
-          }
-        />
+          <Route
+            path="/backlog"
+            element={
+              <ProtectedRoute token={token}>
+                <StatusPage
+                  title="Backlog"
+                  status="backlog"
+                  games={games}
+                  updateStatus={updateStatus}
+                  deleteGame={deleteGame}
+                  openGameDetails={openGameDetails}
+                />
+              </ProtectedRoute>
+            }
+          />
 
-        <Route
-          path="/completed"
-          element={
-            <ProtectedRoute token={token}>
-            <StatusPage
-              title="Completed"
-              status="completed"
-              games={games}
-              updateStatus={updateStatus}
-              deleteGame={deleteGame}
-              openGameDetails={openGameDetails}
-            />
-            </ProtectedRoute>
-          }
-        />
-      </Routes>
-    </main>
+          <Route
+            path="/playing"
+            element={
+              <ProtectedRoute token={token}>
+                <StatusPage
+                  title="Playing"
+                  status="playing"
+                  games={games}
+                  updateStatus={updateStatus}
+                  deleteGame={deleteGame}
+                  openGameDetails={openGameDetails}
+                />
+              </ProtectedRoute>
+            }
+          />
 
-    <GameDetailsModal
-      game={selectedGame}
-      details={gameDetails}
-      loading={detailsLoading}
-      onClose={closeGameDetails}
-      saveGameReview={saveGameReview}
-    />
-  </div>
-);
+          <Route
+            path="/completed"
+            element={
+              <ProtectedRoute token={token}>
+                <StatusPage
+                  title="Completed"
+                  status="completed"
+                  games={games}
+                  updateStatus={updateStatus}
+                  deleteGame={deleteGame}
+                  openGameDetails={openGameDetails}
+                />
+              </ProtectedRoute>
+            }
+          />
+        </Routes>
+      </main>
+
+      <GameDetailsModal
+        game={selectedGame}
+        details={gameDetails}
+        loading={detailsLoading}
+        onClose={closeGameDetails}
+        saveGameReview={saveGameReview}
+      />
+    </div>
+  );
 }
 
 export default App;

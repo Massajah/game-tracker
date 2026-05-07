@@ -1,0 +1,138 @@
+.auth-page {
+  min-height: 100vh;
+  display: grid;
+  align-items: center;
+  justify-content: center;
+  grid-template-columns: 1.1fr 0.9fr;
+  background: #0f172a;
+  padding: 24px;
+}
+
+.auth-hero {
+  padding: 64px;
+  color: white;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.auth-hero-badge {
+  width: fit-content;
+  padding: 8px 12px;
+  border-radius: 999px;
+  background: rgba(37, 99, 235, 0.18);
+  color: #bfdbfe;
+  font-weight: 700;
+  margin-bottom: 20px;
+}
+
+.auth-hero h1 {
+  font-size: 3rem;
+  line-height: 1.05;
+  margin: 0 0 20px 0;
+}
+
+.auth-hero p {
+  max-width: 560px;
+  color: #cbd5e1;
+  font-size: 1.05rem;
+  line-height: 1.7;
+}
+
+.auth-features {
+  display: grid;
+  gap: 12px;
+  margin-top: 28px;
+}
+
+.auth-feature {
+  color: #e5e7eb;
+}
+
+.auth-form-side {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px;
+}
+
+.auth-card {
+  width: 100%;
+  max-width: 420px;
+  background: white;
+  border-radius: 22px;
+  padding: 32px;
+  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.35);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.auth-card h1 {
+  margin: 0;
+  font-size: 1.8rem;
+}
+
+.auth-card p {
+  margin: 0 0 10px 0;
+  color: #6b7280;
+}
+
+.auth-card label {
+  font-weight: 600;
+  color: #374151;
+}
+
+.auth-card input {
+  padding: 12px 14px;
+  border: 1px solid #d1d5db;
+  border-radius: 10px;
+  font-size: 1rem;
+}
+
+.auth-card input:focus {
+  outline: none;
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+}
+
+.auth-card button {
+  margin-top: 8px;
+  padding: 12px 14px;
+  border: none;
+  border-radius: 10px;
+  background: #2563eb;
+  color: white;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.auth-card button:hover {
+  background: #1d4ed8;
+}
+
+.auth-error {
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: #fee2e2;
+  color: #991b1b;
+  font-weight: 600;
+}
+
+.auth-success {
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: #dcfce7;
+  color: #166534;
+  font-weight: 600;
+}
+
+.auth-switch {
+  margin-top: 12px !important;
+  text-align: center;
+}
+
+.auth-switch a {
+  color: #2563eb;
+  font-weight: 700;
+}

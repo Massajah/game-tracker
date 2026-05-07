@@ -45,8 +45,7 @@ exports.register = async (req, res) => {
         email: user.email,
       },
     });
-  } catch (error) {
-    console.error("Register error:", error);
+  } catch {
     res.status(500).json({ error: "Registration failed" });
   }
 };
@@ -81,8 +80,7 @@ exports.login = async (req, res) => {
         email: user.email,
       },
     });
-  } catch (error) {
-    console.error("Login error:", error);
+  } catch {
     res.status(500).json({ error: "Login failed" });
   }
 };
@@ -135,8 +133,7 @@ exports.googleLogin = async (req, res) => {
         email: user.email,
       },
     });
-  } catch (error) {
-    console.error("Google login error:", error);
+  } catch {
     res.status(401).json({ error: "Google login failed" });
   }
 };

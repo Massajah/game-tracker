@@ -24,8 +24,24 @@ const gameSchema = new mongoose.Schema(
     image: {
       type: String,
       default: "",
-  },
-  userRating: {
+    },
+    released: {
+      type: String,
+      default: null,
+    },
+    metacritic: {
+      type: Number,
+      default: null,
+    },
+    genres: {
+      type: [String],
+      default: [],
+    },
+    platforms: {
+      type: [String],
+      default: [],
+    },
+    userRating: {
       type: Number,
       min: 1,
       max: 10,

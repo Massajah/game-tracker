@@ -6,6 +6,8 @@ function GameDetailsModal({ game, details, loading, onClose, saveGameReview }) {
   const [isSaving, setIsSaving] = useState(false);
   const [saveMessage, setSaveMessage] = useState("");
 
+  const isCompleted = game?.status === "completed";
+
   useEffect(() => {
     const handleEscape = (event) => {
       if (event.key === "Escape") {
@@ -29,36 +31,34 @@ function GameDetailsModal({ game, details, loading, onClose, saveGameReview }) {
 
   if (!game) return null;
 
-  const isCompleted = game.status === "completed";
-
   const handleSave = async () => {
-  setIsSaving(true);
-  setSaveMessage("");
-
-  const result = await saveGameReview(
-    game._id,
-    isCompleted ? rating : game.userRating,
-    notes
-  );
-
-  if (result.success) {
-    setSaveMessage("Review saved successfully");
-  } else {
-    setSaveMessage(result.message || "Failed to save review");
-  }
-
-  setIsSaving(false);
-
-  setTimeout(() => {
+    setIsSaving(true);
     setSaveMessage("");
-  }, 2500);
-};
+
+    const result = await saveGameReview(
+      game._id,
+      isCompleted ? rating : game.userRating,
+      notes
+    );
+
+    if (result.success) {
+      setSaveMessage("Review saved successfully");
+    } else {
+      setSaveMessage(result.message || "Failed to save review");
+    }
+
+    setIsSaving(false);
+
+    setTimeout(() => {
+      setSaveMessage("");
+    }, 2500);
+  };
 
   return (
     <div className="modal-overlay" onClick={onClose}>
       <div className="game-modal" onClick={(e) => e.stopPropagation()}>
         <button className="modal-close-button" onClick={onClose}>
-          ✕
+          x
         </button>
 
         {game.image && (
@@ -130,10 +130,12 @@ function GameDetailsModal({ game, details, loading, onClose, saveGameReview }) {
                 <select
                   id="rating"
                   value={rating}
-                  onChange={(e) => setRating(e.target.value === "" ? "" : Number(e.target.value))}
+                  onChange={(e) =>
+                    setRating(e.target.value === "" ? "" : Number(e.target.value))
+                  }
                 >
                   <option value="">No rating</option>
-                  {[1,2,3,4,5,6,7,8,9,10].map((num) => (
+                  {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((num) => (
                     <option key={num} value={num}>
                       {num}
                     </option>
@@ -164,8 +166,8 @@ function GameDetailsModal({ game, details, loading, onClose, saveGameReview }) {
                     saveMessage.includes("Failed") ? "error" : "success"
                   }`}
                 >
-                {saveMessage}
-            </div>
+                  {saveMessage}
+                </div>
               )}
             </div>
 

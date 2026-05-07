@@ -1,0 +1,51 @@
+.app {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 24px;
+}
+
+.app-title {
+  margin-bottom: 24px;
+  font-size: 2rem;
+}
+
+.app-layout {
+  display: flex;
+  min-height: 100vh;
+}
+
+.main-content {
+  flex: 1;
+  padding: 40px;
+  box-sizing: border-box;
+  background: var(--app-bg);
+}
+
+.page-header {
+  margin-bottom: 24px;
+}
+
+.page-title {
+  margin: 0 0 8px 0;
+  font-size: 2rem;
+}
+
+.page-subtitle {
+  margin: 0;
+  color: #6b7280;
+  max-width: 700px;
+}
+
+.page-section {
+  margin-bottom: 36px;
+}
+
+.section-title {
+  margin-bottom: 16px;
+  font-size: 1.25rem;
+  font-weight: 700;
+}
+
+.empty-text {
+  color: #6b7280;
+}

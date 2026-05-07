@@ -11,25 +11,24 @@ router.post("/recommendations", async (req, res) => {
     const { games, randomSeed, recentAIRecommendations } = req.body;
 
     const completed = games
-  .filter((game) => game.status === "completed")
-  .map((game) => `${game.title} (${game.userRating || "no rating"}/10)`);
+      .filter((game) => game.status === "completed")
+      .map((game) => `${game.title} (${game.userRating || "no rating"}/10)`);
 
-const playing = games
-  .filter((game) => game.status === "playing")
-  .map((game) => game.title);
+    const playing = games
+      .filter((game) => game.status === "playing")
+      .map((game) => game.title);
 
-const backlog = games
-  .filter((game) => game.status === "backlog")
-  .map((game) => game.title);
+    const backlog = games
+      .filter((game) => game.status === "backlog")
+      .map((game) => game.title);
 
-const wishlist = games
-  .filter((game) => game.status === "wishlist")
-  .map((game) => game.title);
+    const wishlist = games
+      .filter((game) => game.status === "wishlist")
+      .map((game) => game.title);
 
-const allOwnedOrTracked = games.map((game) => game.title);
+    const allOwnedOrTracked = games.map((game) => game.title);
 
-
-const prompt = `
+    const prompt = `
 You are a video game recommendation assistant.
 
 User preferences:
@@ -44,8 +43,6 @@ Do NOT recommend any of these recent AI suggestions:
 ${recentAIRecommendations.join(", ") || "none"}
 
 Recommend exactly 1 new game not in the lists above.
-
-Recommend exactly 1 new game not in the list above.
 
 Base it on:
 - the user's highest rated completed games
@@ -73,28 +70,22 @@ Keep it concise.
 `;
 
     const response = await client.responses.create({
-  model: "gpt-5.2",
-  input: prompt,
-});
+      model: "gpt-5.2",
+      input: prompt,
+    });
 
-const text = response.output_text;
+    let recommendation;
 
-let recommendation;
-
-try {
-      recommendation = JSON.parse(text);
-    } catch (error) {
-      console.error("Failed to parse AI response:", text);
-
+    try {
+      recommendation = JSON.parse(response.output_text);
+    } catch {
       return res.status(500).json({
         error: "Failed to parse AI response",
       });
     }
 
     res.json({ recommendation });
-  } catch (error) {
-    console.error("AI recommendation error:", error);
-
+  } catch {
     res.status(500).json({
       error: "Failed to generate recommendation",
     });

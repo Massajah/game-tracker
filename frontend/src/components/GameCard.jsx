@@ -1,12 +1,8 @@
 function GameCard({ game, updateStatus, deleteGame, onClick }) {
   return (
-    <div className="game-card" onClick={() => onClick(game)}> 
+    <div className="game-card" onClick={() => onClick(game)}>
       {game.image && (
-        <img
-          src={game.image}
-          alt={game.title}
-          className="game-card-image"
-        />
+        <img src={game.image} alt={game.title} className="game-card-image" />
       )}
 
       <div className="game-card-content">
@@ -14,7 +10,7 @@ function GameCard({ game, updateStatus, deleteGame, onClick }) {
         <p className="game-card-status">{game.status}</p>
 
         {game.status === "completed" && game.userRating && (
-          <p className="game-card-rating">⭐ {game.userRating}/10</p>
+          <p className="game-card-rating">Rating: {game.userRating}/10</p>
         )}
 
         <div className="game-card-actions" onClick={(e) => e.stopPropagation()}>

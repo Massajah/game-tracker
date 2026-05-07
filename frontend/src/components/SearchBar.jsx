@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import axios from "axios";
 
 function SearchBar({
@@ -34,8 +34,7 @@ function SearchBar({
         );
 
         setResults(res.data.results || []);
-      } catch (error) {
-        console.error("Search error:", error);
+      } catch {
         setResults([]);
       } finally {
         setLoading(false);
@@ -50,47 +49,49 @@ function SearchBar({
   }, [search]);
 
   useEffect(() => {
-  const handleClickOutside = (event) => {
-    if (searchRef.current && !searchRef.current.contains(event.target)) {
-      setResults([]);
+    const handleClickOutside = (event) => {
+      if (searchRef.current && !searchRef.current.contains(event.target)) {
+        setResults([]);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
+  const handleAddGame = async (game) => {
+    const result = await addFromAPI(game, selectedStatus);
+
+    if (result?.success) {
+      setJustAddedGameId(game.id);
+      setJustAddedStatus(selectedStatus);
+      setMessage("");
+
+      setTimeout(() => {
+        setJustAddedGameId(null);
+        setJustAddedStatus("");
+      }, 2500);
+
+      setTimeout(() => {
+        setSearch("");
+      }, 2000);
+    } else if (result?.message) {
+      setMessage(result.message);
+    } else {
+      setMessage("Something went wrong");
     }
   };
 
-  document.addEventListener("mousedown", handleClickOutside);
-
-  return () => {
-    document.removeEventListener("mousedown", handleClickOutside);
+  const getExistingGame = (rawgId) => {
+    return games.find((game) => game.rawgId === rawgId);
   };
-}, []);
 
-  const handleAddGame = async (game) => {
-  const result = await addFromAPI(game, selectedStatus);
-
-  if (result?.success) {
-    setJustAddedGameId(game.id);
-    setJustAddedStatus(selectedStatus);
-
-    setTimeout(() => {
-      setJustAddedGameId(null);
-      setJustAddedStatus("");
-    }, 2500);
-    setTimeout(() => {
-    setSearch("");
-    }, 2000);
-  } else if (result?.message) {
-    setMessage(result.message);
-  } else {
-    setMessage("Something went wrong");
-  }
-};
-
-const getExistingGame = (rawgId) => {
-  return games.find((g) => g.rawgId === rawgId);
-};
-
-const formatStatus = (status) => {
-  return status.charAt(0).toUpperCase() + status.slice(1);
-};
+  const formatStatus = (status) => {
+    return status.charAt(0).toUpperCase() + status.slice(1);
+  };
 
   return (
     <div className="search-area" ref={searchRef}>
@@ -109,47 +110,52 @@ const formatStatus = (status) => {
               {loading ? (
                 <div className="search-result-item">Searching...</div>
               ) : (
-                    results.slice(0, 8).map((game) => {
-                        const existingGame = getExistingGame(game.id);
-                        const alreadyAdded = Boolean(existingGame);
-                        const justAdded = justAddedGameId === game.id;
+                results.slice(0, 8).map((game) => {
+                  const existingGame = getExistingGame(game.id);
+                  const alreadyAdded = Boolean(existingGame);
+                  const justAdded = justAddedGameId === game.id;
 
-  return (
-    <button
-      key={game.id}
-      className={`search-result-item ${alreadyAdded || justAdded ? "disabled" : ""}`}
-      onClick={() => !alreadyAdded && !justAdded && handleAddGame(game)}
-      disabled={alreadyAdded || justAdded}
-    >
-      {game.background_image && (
-        <img
-          src={game.background_image}
-          alt={game.name}
-          className="search-result-image"
-        />
-      )}
+                  return (
+                    <button
+                      key={game.id}
+                      className={`search-result-item ${
+                        alreadyAdded || justAdded ? "disabled" : ""
+                      }`}
+                      onClick={() =>
+                        !alreadyAdded && !justAdded && handleAddGame(game)
+                      }
+                      disabled={alreadyAdded || justAdded}
+                    >
+                      {game.background_image && (
+                        <img
+                          src={game.background_image}
+                          alt={game.name}
+                          className="search-result-image"
+                        />
+                      )}
 
-      <div className="search-result-info">
-        <span className="search-result-title">{game.name}</span>
+                      <div className="search-result-info">
+                        <span className="search-result-title">{game.name}</span>
 
-        {justAdded ? (
-  <span className="search-result-added">
-    Added to {formatStatus(justAddedStatus)}
-  </span>
-) : alreadyAdded ? (
-  <span className="search-result-added">
-    Already added ({formatStatus(existingGame.status)})
-  </span>
-) : (
-  game.released && (
-    <span className="search-result-meta">{game.released}</span>
-  )
-)}
-
-      </div>
-    </button>
-  );
-})
+                        {justAdded ? (
+                          <span className="search-result-added">
+                            Added to {formatStatus(justAddedStatus)}
+                          </span>
+                        ) : alreadyAdded ? (
+                          <span className="search-result-added">
+                            Already added ({formatStatus(existingGame.status)})
+                          </span>
+                        ) : (
+                          game.released && (
+                            <span className="search-result-meta">
+                              {game.released}
+                            </span>
+                          )
+                        )}
+                      </div>
+                    </button>
+                  );
+                })
               )}
             </div>
           )}
