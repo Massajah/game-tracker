@@ -459,6 +459,41 @@
   font-size: 1.25rem;
 }
 
+.ai-recommendation-fallback {
+  padding: 14px;
+  border-radius: 14px;
+  background: linear-gradient(135deg, var(--sub-panel-bg), var(--card-bg));
+  border: 1px solid var(--border-color);
+  margin-bottom: 14px;
+}
+
+.ai-fallback-content {
+  min-height: 96px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  color: var(--text-muted);
+  border: 1px dashed var(--border-color);
+  border-radius: 12px;
+  background: rgba(37, 99, 235, 0.05);
+  text-align: center;
+  font-weight: 700;
+}
+
+.ai-fallback-icon {
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: rgba(37, 99, 235, 0.12);
+  color: #2563eb;
+  font-size: 0.8rem;
+  letter-spacing: 0.04em;
+}
+
 .ai-recommendation-card > p {
   margin: 0 0 14px 0;
 }
@@ -474,6 +509,10 @@
   margin: 0;
   color: white;
   font-size: 1.25rem;
+}
+
+.ai-recommendation-footer.no-image h3 {
+  color: var(--text-main);
 }
 
 .ai-overlay-button {
@@ -499,4 +538,13 @@
 .ai-confidence {
   background: #2563eb;
   color: rgb(255, 255, 255);
+}
+
+.ai-overlay-button.added {
+  background: #16a34a;
+  color: white;
+}
+
+.ai-overlay-button.added:hover {
+  background: #16a34a;
 }

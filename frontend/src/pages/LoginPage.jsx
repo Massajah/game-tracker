@@ -80,32 +80,32 @@ function LoginPage({ setUser, setToken }) {
   );
 
   useEffect(() => {
-  let intervalId;
+    let intervalId;
 
-  const renderGoogleButton = () => {
-    if (!window.google || !googleButtonRef.current) return;
+    const renderGoogleButton = () => {
+      if (!window.google || !googleButtonRef.current) return;
 
-    window.google.accounts.id.initialize({
-      client_id: process.env.REACT_APP_GOOGLE_CLIENT_ID,
-      callback: handleGoogleResponse,
-      locale: "en",
-    });
+      window.google.accounts.id.initialize({
+        client_id: process.env.REACT_APP_GOOGLE_CLIENT_ID,
+        callback: handleGoogleResponse,
+        locale: "en",
+      });
 
-    window.google.accounts.id.renderButton(googleButtonRef.current, {
-      theme: "outline",
-      size: "large",
-      width: googleButtonRef.current.offsetWidth,
-    });
+      window.google.accounts.id.renderButton(googleButtonRef.current, {
+        theme: "outline",
+        size: "large",
+        width: googleButtonRef.current.offsetWidth,
+      });
 
-    clearInterval(intervalId);
-  };
+      clearInterval(intervalId);
+    };
 
-  renderGoogleButton();
+    renderGoogleButton();
 
-  intervalId = setInterval(renderGoogleButton, 300);
+    intervalId = setInterval(renderGoogleButton, 300);
 
-  return () => clearInterval(intervalId);
-}, [handleGoogleResponse]);
+    return () => clearInterval(intervalId);
+  }, [handleGoogleResponse]);
 
   return (
     <div className="auth-page">

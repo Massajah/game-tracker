@@ -15,15 +15,15 @@ exports.getGames = async (req, res) => {
 exports.createGame = async (req, res) => {
   try {
     const {
-       title, 
-       status, 
-       rawgId, 
-       image, 
-       released, 
-       metacritic, 
-       genres, 
-       platforms 
-      } = req.body;
+      title,
+      status,
+      rawgId,
+      image,
+      released,
+      metacritic,
+      genres,
+      platforms
+    } = req.body;
     const { userId } = req.user;
 
     if (!title || !title.trim()) {
@@ -86,7 +86,7 @@ exports.updateGame = async (req, res) => {
     const updatedGame = await Game.findOneAndUpdate(
       { _id: req.params.id, userId: req.user.userId },
       updateData,
-      { new: true, runValidators: true }
+      { returnDocument: "after", runValidators: true }
     );
 
     if (!updatedGame) {

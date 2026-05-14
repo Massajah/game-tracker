@@ -58,6 +58,16 @@ function HomePage({ games, openGameDetails, fetchGames }) {
     }, 2800);
   };
 
+  const findRawgGame = (rawgData, title) => {
+    const results = Array.isArray(rawgData?.results) ? rawgData.results : [];
+
+    return (
+      results.find(
+        (game) => game?.name?.toLowerCase() === title.toLowerCase()
+      ) || results[0]
+    );
+  };
+
   const pickAnotherBacklogGame = () => {
     if (backlogGames.length === 0) return;
 
@@ -77,78 +87,77 @@ function HomePage({ games, openGameDetails, fetchGames }) {
   };
 
   const getAIRecommendations = async () => {
-  try {
-    setAiLoading(true);
-    setAiAddFeedback(null);
-    setIsAIRecommendationAdded(false);
+    try {
+      setAiLoading(true);
+      setAiAddFeedback(null);
+      setIsAIRecommendationAdded(false);
 
-    const res = await fetch("http://localhost:5000/ai/recommendations", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        games,
-        randomSeed: Date.now(),
-        recentAIRecommendations,
-      }),
-    });
+      const res = await fetch("http://localhost:5000/ai/recommendations", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          games,
+          randomSeed: Date.now(),
+          recentAIRecommendations,
+        }),
+      });
 
-    const data = await res.json();
-    const recommendation = data.recommendation;
+      const data = await res.json();
+      const recommendation = data.recommendation;
 
-    let recommendationWithImage = recommendation;
+      let recommendationWithImage = recommendation;
 
-    if (recommendation?.title) {
-      const rawgRes = await fetch(
-        `https://api.rawg.io/api/games?key=${process.env.REACT_APP_RAWG_API_KEY}&search=${encodeURIComponent(
-          recommendation.title
-        )}`
-      );
+      if (recommendation?.title) {
+        try {
+          const rawgRes = await fetch(
+            `https://api.rawg.io/api/games?key=${process.env.REACT_APP_RAWG_API_KEY}&search=${encodeURIComponent(
+              recommendation.title
+            )}`
+          );
 
-      const rawgData = await rawgRes.json();
+          const rawgData = await rawgRes.json();
+          const rawgGame = findRawgGame(rawgData, recommendation.title);
 
-      const rawgGame =
-        rawgData.results?.find(
-          (game) =>
-            game.name.toLowerCase() === recommendation.title.toLowerCase()
-        ) || rawgData.results?.[0];
-
-      if (rawgGame) {
-        recommendationWithImage = {
-          ...recommendation,
-          image: rawgGame.background_image,
-          rawgId: rawgGame.id,
-          released: rawgGame.released || null,
-          metacritic: rawgGame.metacritic || null,
-          genres: rawgGame.genres?.map((genre) => genre.name) || [],
-          platforms: rawgGame.platforms?.map((p) => p.platform.name) || [],
-        };
+          if (rawgGame) {
+            recommendationWithImage = {
+              ...recommendation,
+              image: rawgGame.background_image || null,
+              rawgId: rawgGame.id,
+              released: rawgGame.released || null,
+              metacritic: rawgGame.metacritic || null,
+              genres: rawgGame.genres?.map((genre) => genre.name) || [],
+              platforms: rawgGame.platforms?.map((p) => p.platform.name) || [],
+            };
+          }
+        } catch {
+          recommendationWithImage = recommendation;
+        }
       }
+
+      setAiRecommendation(recommendationWithImage);
+
+      setRecentAIRecommendations((prev) => {
+        const newTitle = recommendationWithImage?.title;
+
+        if (!newTitle) return prev;
+
+        return [newTitle, ...prev.filter((title) => title !== newTitle)].slice(
+          0,
+          3
+        );
+      });
+    } catch {
+      setAiRecommendation({
+        title: "Error",
+        reason: "Failed to load recommendation.",
+        confidence: null,
+      });
+    } finally {
+      setAiLoading(false);
     }
-
-    setAiRecommendation(recommendationWithImage);
-
-    setRecentAIRecommendations((prev) => {
-      const newTitle = recommendationWithImage?.title;
-
-      if (!newTitle) return prev;
-
-      return [newTitle, ...prev.filter((title) => title !== newTitle)].slice(
-        0,
-        3
-      );
-    });
-  } catch {
-    setAiRecommendation({
-      title: "Error",
-      reason: "Failed to load recommendation.",
-      confidence: null,
-    });
-  } finally {
-    setAiLoading(false);
-  }
-};
+  };
 
   const addAIRecommendationToWishlist = async () => {
     if (!aiRecommendation?.title) return;
@@ -157,18 +166,21 @@ function HomePage({ games, openGameDetails, fetchGames }) {
       setIsAddingAIRecommendation(true);
       setAiAddFeedback(null);
 
-      const rawgRes = await fetch(
-        `https://api.rawg.io/api/games?key=${process.env.REACT_APP_RAWG_API_KEY}&search=${encodeURIComponent(
-          aiRecommendation.title
-        )}`
-      );
+      let game;
 
-      const rawgData = await rawgRes.json();
-      const game =
-        rawgData.results?.find(
-          (result) =>
-            result.name.toLowerCase() === aiRecommendation.title.toLowerCase()
-        ) || rawgData.results?.[0];
+      try {
+        const rawgRes = await fetch(
+          `https://api.rawg.io/api/games?key=${process.env.REACT_APP_RAWG_API_KEY}&search=${encodeURIComponent(
+            aiRecommendation.title
+          )}`
+        );
+
+        const rawgData = await rawgRes.json();
+        game = findRawgGame(rawgData, aiRecommendation.title);
+      } catch {
+        showAIAddFeedback("error", "Game not found from RAWG.");
+        return;
+      }
 
       if (!game) {
         showAIAddFeedback("error", "Game not found from RAWG.");
@@ -215,7 +227,7 @@ function HomePage({ games, openGameDetails, fetchGames }) {
   };
 
   const aiRecommendationImage =
-  aiRecommendation?.image || aiRecommendation?.background_image;
+    aiRecommendation?.image || aiRecommendation?.background_image;
 
   return (
     <div className="home-page">
@@ -310,8 +322,8 @@ function HomePage({ games, openGameDetails, fetchGames }) {
                 {aiLoading
                   ? "Thinking..."
                   : aiRecommendation
-                  ? "Get new"
-                  : "Get recommendation"}
+                    ? "Get new"
+                    : "Get recommendation"}
               </button>
             </div>
 
@@ -331,67 +343,94 @@ function HomePage({ games, openGameDetails, fetchGames }) {
 
             {aiRecommendation && !aiLoading && (
               <div className="ai-recommendation-card">
-  {aiRecommendationImage && (
-    <div
-      className="ai-recommendation-hero"
-      style={{
-        backgroundImage: `url(${aiRecommendationImage})`,
-      }}
-    >
-      <div className="ai-recommendation-overlay">
-        <div className="ai-recommendation-header">
-          <span className="ai-badge">AI Pick</span>
+                {aiRecommendationImage ? (
+                  <div
+                    className="ai-recommendation-hero"
+                    style={{
+                      backgroundImage: `url(${aiRecommendationImage})`,
+                    }}
+                  >
+                    <div className="ai-recommendation-overlay">
+                      <div className="ai-recommendation-header">
+                        <span className="ai-badge">AI Pick</span>
 
-          {aiRecommendation.confidence && (
-            <span className="ai-confidence">
-              Match: {aiRecommendation.confidence}/10
-            </span>
-          )}
-        </div>
+                        {aiRecommendation.confidence && (
+                          <span className="ai-confidence">
+                            Match: {aiRecommendation.confidence}/10
+                          </span>
+                        )}
+                      </div>
 
-<div className="ai-recommendation-footer">
-        <h3>{aiRecommendation.title}</h3>
+                      <div className="ai-recommendation-footer">
+                        <h3>{aiRecommendation.title}</h3>
 
-        <button
-    className="primary-button"
-    onClick={addAIRecommendationToWishlist}
-    disabled={isAddingAIRecommendation || isAIRecommendationAdded}
-  >
-    {isAddingAIRecommendation
-      ? "Adding..."
-      : isAIRecommendationAdded
-      ? "Added to wishlist"
-      : "Add to wishlist"}
-  </button>
-      </div>
-    </div>
-    </div>
-  )}
+                        <button
+                          className={`primary-button ai-overlay-button ${isAIRecommendationAdded ? "added" : ""
+                            }`}
+                          onClick={addAIRecommendationToWishlist}
+                          disabled={
+                            isAddingAIRecommendation ||
+                            isAIRecommendationAdded
+                          }
+                        >
+                          {isAddingAIRecommendation
+                            ? "Adding..."
+                            : isAIRecommendationAdded
+                              ? "✓ Added"
+                              : "Add to wishlist"}
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="ai-recommendation-fallback">
+                    <div className="ai-recommendation-header">
+                      <span className="ai-badge">AI Pick</span>
 
-  {!aiRecommendationImage && (
-    <div className="ai-recommendation-header">
-      <span className="ai-badge">AI Pick</span>
+                      {aiRecommendation.confidence && (
+                        <span className="ai-confidence">
+                          Match: {aiRecommendation.confidence}/10
+                        </span>
+                      )}
+                    </div>
 
-      {aiRecommendation.confidence && (
-        <span className="ai-confidence">
-          Match: {aiRecommendation.confidence}/10
-        </span>
-      )}
-    </div>
-  )}
+                    <div className="ai-fallback-content">
+                      <span className="ai-fallback-icon" aria-hidden="true">
+                        IMG
+                      </span>
+                      <span>No image available</span>
+                    </div>
 
-  {!aiRecommendationImage && <h3>{aiRecommendation.title}</h3>}
+                    <div className="ai-recommendation-footer no-image">
+                      <h3>{aiRecommendation.title}</h3>
 
-  <div className="ai-recommendation-body">
-    <p>{aiRecommendation.reason}</p>
-  </div>
+                      <button
+                        className="primary-button"
+                        onClick={addAIRecommendationToWishlist}
+                        disabled={
+                          isAddingAIRecommendation || isAIRecommendationAdded
+                        }
+                      >
+                        {isAddingAIRecommendation
+                          ? "Adding..."
+                          : isAIRecommendationAdded
+                            ? "✓ Added"
+                            : "Add to wishlist"}
+                      </button>
+                    </div>
+                  </div>
+                )}
 
-  {aiAddFeedback && (
-    <div className={`ai-add-message ${aiAddFeedback.type}`}>
-      {aiAddFeedback.message}
-    </div>
-  )}
-</div>
+                <div className="ai-recommendation-body">
+                  <p>{aiRecommendation.reason}</p>
+                </div>
+
+                {aiAddFeedback?.type === "error" && (
+                  <div className="ai-add-message error">
+                    {aiAddFeedback.message}
+                  </div>
+                )}
+              </div>
             )}
           </div>
         </section>

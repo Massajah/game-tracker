@@ -118,9 +118,8 @@ function SearchBar({
                   return (
                     <button
                       key={game.id}
-                      className={`search-result-item ${
-                        alreadyAdded || justAdded ? "disabled" : ""
-                      }`}
+                      className={`search-result-item ${alreadyAdded || justAdded ? "disabled" : ""
+                        }`}
                       onClick={() =>
                         !alreadyAdded && !justAdded && handleAddGame(game)
                       }

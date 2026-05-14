@@ -162,9 +162,8 @@ function GameDetailsModal({ game, details, loading, onClose, saveGameReview }) {
             <div className="save-message-area">
               {saveMessage && (
                 <div
-                  className={`save-message-box ${
-                    saveMessage.includes("Failed") ? "error" : "success"
-                  }`}
+                  className={`save-message-box ${saveMessage.includes("Failed") ? "error" : "success"
+                    }`}
                 >
                   {saveMessage}
                 </div>

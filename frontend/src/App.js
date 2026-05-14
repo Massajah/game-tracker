@@ -206,9 +206,9 @@ function App() {
       averageRating:
         ratedGames.length > 0
           ? (
-              ratedGames.reduce((sum, game) => sum + game.userRating, 0) /
-              ratedGames.length
-            ).toFixed(1)
+            ratedGames.reduce((sum, game) => sum + game.userRating, 0) /
+            ratedGames.length
+          ).toFixed(1)
           : "-",
     };
   }, [games]);
