@@ -16,7 +16,7 @@ function LoginPage({ setUser, setToken }) {
     setError("");
 
     try {
-      const res = await fetch("http://localhost:5000/auth/login", {
+      const res = await fetch(`${process.env.REACT_APP_API_URL}/auth/login`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -48,7 +48,7 @@ function LoginPage({ setUser, setToken }) {
       try {
         setError("");
 
-        const res = await fetch("http://localhost:5000/auth/google", {
+        const res = await fetch(`${process.env.REACT_APP_API_URL}/auth/google`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",

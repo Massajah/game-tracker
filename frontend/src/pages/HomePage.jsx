@@ -92,7 +92,7 @@ function HomePage({ games, openGameDetails, fetchGames }) {
       setAiAddFeedback(null);
       setIsAIRecommendationAdded(false);
 
-      const res = await fetch("http://localhost:5000/ai/recommendations", {
+      const res = await fetch(`${process.env.REACT_APP_API_URL}/ai/recommendations`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -187,7 +187,7 @@ function HomePage({ games, openGameDetails, fetchGames }) {
         return;
       }
 
-      const response = await fetch("http://localhost:5000/games", {
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/games`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
