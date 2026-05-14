@@ -66,3 +66,18 @@ body.dark .secondary-button:hover {
   box-shadow: 0 0 0 1px rgba(59, 130, 246, 0.4),
               0 4px 12px rgba(37, 99, 235, 0.2);
 }
+
+.dark .save-review-button {
+  background: #111827;
+  color: #ffffff;
+  border: 1px solid #1f2937;
+  transition: all 0.2s ease;
+}
+
+.dark .save-review-button:hover {
+  background: #2563eb;
+  border-color: #3b82f6;
+  color: white;
+  box-shadow: 0 0 12px rgba(37, 99, 235, 0.35);
+  transform: translateY(-1px);
+}

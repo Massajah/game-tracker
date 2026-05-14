@@ -80,6 +80,9 @@ function LoginPage({ setUser, setToken }) {
   );
 
   useEffect(() => {
+  let intervalId;
+
+  const renderGoogleButton = () => {
     if (!window.google || !googleButtonRef.current) return;
 
     window.google.accounts.id.initialize({
@@ -93,12 +96,21 @@ function LoginPage({ setUser, setToken }) {
       size: "large",
       width: googleButtonRef.current.offsetWidth,
     });
-  }, [handleGoogleResponse]);
+
+    clearInterval(intervalId);
+  };
+
+  renderGoogleButton();
+
+  intervalId = setInterval(renderGoogleButton, 300);
+
+  return () => clearInterval(intervalId);
+}, [handleGoogleResponse]);
 
   return (
     <div className="auth-page">
       <div className="auth-hero">
-        <div className="auth-hero-badge">GameTracker</div>
+        <div className="auth-hero-badge">Game-Tracker</div>
         <h1>
           Track your games. <span>Find what to play next.</span>
         </h1>

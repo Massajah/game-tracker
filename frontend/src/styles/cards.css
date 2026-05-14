@@ -67,6 +67,39 @@
   margin-bottom: 40px;
 }
 
+.library-controls {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-bottom: 18px;
+  flex-wrap: wrap;
+}
+
+.library-control {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.library-control span {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--text-muted);
+}
+
+.library-control select {
+  min-width: 160px;
+  padding: 8px 10px;
+  border-radius: 10px;
+  font-size: 0.9rem;
+}
+
+.library-control select:focus {
+  outline: none;
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+}
+
 .game-grid {
   display: flex;
   flex-wrap: wrap;
@@ -138,4 +171,34 @@
 
 .game-card-actions button {
   cursor: pointer;
+}
+
+.delete-button {
+  background: #fcf8f8;
+  border: 1px solid #d1d5db;
+  color: #374151;
+  transition: all 0.2s ease;
+}
+
+.delete-button:hover {
+  background: #dc2626;
+  border-color: #dc2626;
+  color: white;
+  box-shadow: 0 0 12px rgba(220, 38, 38, 0.3);
+  transform: translateY(-1px);
+}
+
+.dark .delete-button {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: #e5e7eb;
+  transition: all 0.2s ease;
+}
+
+.dark .delete-button:hover {
+  background: #dc2626;
+  border-color: #ef4444;
+  color: white;
+  box-shadow: 0 0 12px rgba(220, 38, 38, 0.3);
+  transform: translateY(-1px);
 }

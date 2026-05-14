@@ -77,47 +77,78 @@ function HomePage({ games, openGameDetails, fetchGames }) {
   };
 
   const getAIRecommendations = async () => {
-    try {
-      setAiLoading(true);
-      setAiAddFeedback(null);
-      setIsAIRecommendationAdded(false);
+  try {
+    setAiLoading(true);
+    setAiAddFeedback(null);
+    setIsAIRecommendationAdded(false);
 
-      const res = await fetch("http://localhost:5000/ai/recommendations", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          games,
-          randomSeed: Date.now(),
-          recentAIRecommendations,
-        }),
-      });
+    const res = await fetch("http://localhost:5000/ai/recommendations", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        games,
+        randomSeed: Date.now(),
+        recentAIRecommendations,
+      }),
+    });
 
-      const data = await res.json();
+    const data = await res.json();
+    const recommendation = data.recommendation;
 
-      setAiRecommendation(data.recommendation);
+    let recommendationWithImage = recommendation;
 
-      setRecentAIRecommendations((prev) => {
-        const newTitle = data.recommendation?.title;
+    if (recommendation?.title) {
+      const rawgRes = await fetch(
+        `https://api.rawg.io/api/games?key=${process.env.REACT_APP_RAWG_API_KEY}&search=${encodeURIComponent(
+          recommendation.title
+        )}`
+      );
 
-        if (!newTitle) return prev;
+      const rawgData = await rawgRes.json();
 
-        return [newTitle, ...prev.filter((title) => title !== newTitle)].slice(
-          0,
-          3
-        );
-      });
-    } catch {
-      setAiRecommendation({
-        title: "Error",
-        reason: "Failed to load recommendation.",
-        confidence: null,
-      });
-    } finally {
-      setAiLoading(false);
+      const rawgGame =
+        rawgData.results?.find(
+          (game) =>
+            game.name.toLowerCase() === recommendation.title.toLowerCase()
+        ) || rawgData.results?.[0];
+
+      if (rawgGame) {
+        recommendationWithImage = {
+          ...recommendation,
+          image: rawgGame.background_image,
+          rawgId: rawgGame.id,
+          released: rawgGame.released || null,
+          metacritic: rawgGame.metacritic || null,
+          genres: rawgGame.genres?.map((genre) => genre.name) || [],
+          platforms: rawgGame.platforms?.map((p) => p.platform.name) || [],
+        };
+      }
     }
-  };
+
+    setAiRecommendation(recommendationWithImage);
+
+    setRecentAIRecommendations((prev) => {
+      const newTitle = recommendationWithImage?.title;
+
+      if (!newTitle) return prev;
+
+      return [newTitle, ...prev.filter((title) => title !== newTitle)].slice(
+        0,
+        3
+      );
+    });
+  } catch {
+    setAiRecommendation({
+      title: "Error",
+      reason: "Failed to load recommendation.",
+      confidence: null,
+    });
+  } finally {
+    setAiLoading(false);
+  }
+};
 
   const addAIRecommendationToWishlist = async () => {
     if (!aiRecommendation?.title) return;
@@ -182,6 +213,9 @@ function HomePage({ games, openGameDetails, fetchGames }) {
       setIsAddingAIRecommendation(false);
     }
   };
+
+  const aiRecommendationImage =
+  aiRecommendation?.image || aiRecommendation?.background_image;
 
   return (
     <div className="home-page">
@@ -297,39 +331,67 @@ function HomePage({ games, openGameDetails, fetchGames }) {
 
             {aiRecommendation && !aiLoading && (
               <div className="ai-recommendation-card">
-                <div className="ai-recommendation-header">
-                  <span className="ai-badge">AI Pick</span>
+  {aiRecommendationImage && (
+    <div
+      className="ai-recommendation-hero"
+      style={{
+        backgroundImage: `url(${aiRecommendationImage})`,
+      }}
+    >
+      <div className="ai-recommendation-overlay">
+        <div className="ai-recommendation-header">
+          <span className="ai-badge">AI Pick</span>
 
-                  {aiRecommendation.confidence && (
-                    <span className="ai-confidence">
-                      Match: {aiRecommendation.confidence}/10
-                    </span>
-                  )}
-                </div>
+          {aiRecommendation.confidence && (
+            <span className="ai-confidence">
+              Match: {aiRecommendation.confidence}/10
+            </span>
+          )}
+        </div>
 
-                <h3>{aiRecommendation.title}</h3>
-                <p>{aiRecommendation.reason}</p>
+<div className="ai-recommendation-footer">
+        <h3>{aiRecommendation.title}</h3>
 
-                <button
-                  className="primary-button"
-                  onClick={addAIRecommendationToWishlist}
-                  disabled={
-                    isAddingAIRecommendation || isAIRecommendationAdded
-                  }
-                >
-                  {isAddingAIRecommendation
-                    ? "Adding..."
-                    : isAIRecommendationAdded
-                    ? "Added to wishlist"
-                    : "Add to wishlist"}
-                </button>
+        <button
+    className="primary-button"
+    onClick={addAIRecommendationToWishlist}
+    disabled={isAddingAIRecommendation || isAIRecommendationAdded}
+  >
+    {isAddingAIRecommendation
+      ? "Adding..."
+      : isAIRecommendationAdded
+      ? "Added to wishlist"
+      : "Add to wishlist"}
+  </button>
+      </div>
+    </div>
+    </div>
+  )}
 
-                {aiAddFeedback && (
-                  <div className={`ai-add-message ${aiAddFeedback.type}`}>
-                    {aiAddFeedback.message}
-                  </div>
-                )}
-              </div>
+  {!aiRecommendationImage && (
+    <div className="ai-recommendation-header">
+      <span className="ai-badge">AI Pick</span>
+
+      {aiRecommendation.confidence && (
+        <span className="ai-confidence">
+          Match: {aiRecommendation.confidence}/10
+        </span>
+      )}
+    </div>
+  )}
+
+  {!aiRecommendationImage && <h3>{aiRecommendation.title}</h3>}
+
+  <div className="ai-recommendation-body">
+    <p>{aiRecommendation.reason}</p>
+  </div>
+
+  {aiAddFeedback && (
+    <div className={`ai-add-message ${aiAddFeedback.type}`}>
+      {aiAddFeedback.message}
+    </div>
+  )}
+</div>
             )}
           </div>
         </section>

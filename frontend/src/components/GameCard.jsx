@@ -24,7 +24,7 @@ function GameCard({ game, updateStatus, deleteGame, onClick }) {
             <option value="completed">Completed</option>
           </select>
 
-          <button onClick={() => deleteGame(game._id)}>Delete</button>
+          <button className="delete-button" onClick={() => deleteGame(game._id)}>Delete</button>
         </div>
       </div>
     </div>

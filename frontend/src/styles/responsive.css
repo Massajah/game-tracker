@@ -197,6 +197,11 @@
     gap: 16px;
   }
 
+  .library-controls {
+    grid-template-columns: 1fr;
+    padding: 14px;
+  }
+
   .game-card,
   .home-mini-card,
   .random-pick-card {
@@ -593,5 +598,66 @@
 
   .sidebar-bottom {
     margin-top: 28px;
+  }
+}
+
+@media (max-width: 768px) {
+  .status-page-header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .library-controls {
+    justify-content: flex-start;
+  }
+
+  .library-control select {
+    width: 100%;
+  }
+}
+
+@media (max-width: 768px) {
+  .ai-recommendation-hero {
+    height: 180px;
+  }
+
+  .ai-recommendation-overlay {
+    padding: 12px;
+  }
+
+  .ai-recommendation-overlay .ai-recommendation-header {
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .ai-confidence {
+    background: rgba(37, 99, 235, 0.95);
+    color: white;
+  }
+
+  .ai-recommendation-footer {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .ai-recommendation-footer h3 {
+    max-width: 100%;
+    font-size: 1.15rem;
+    line-height: 1.1;
+  }
+
+  .ai-overlay-button {
+    width: 100%;
+    padding: 10px 12px;
+  }
+
+  .ai-recommendation-body {
+    padding: 12px 0 0;
+  }
+
+  .ai-recommendation-body p {
+    font-size: 0.95rem;
+    line-height: 1.5;
   }
 }
