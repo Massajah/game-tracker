@@ -13,7 +13,7 @@ app.use(
   cors({
     origin: [
       "http://localhost:3000",
-      "https://game-tracker-52z8bp30p-masa-s-projects3.vercel.app",
+      "https://game-tracker-indol.vercel.app",
     ],
     credentials: true,
   })
