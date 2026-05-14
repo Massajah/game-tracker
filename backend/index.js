@@ -9,7 +9,16 @@ const gameRoutes = require("./routes/gameRoutes");
 
 const app = express();
 
-app.use(cors());
+app.use(
+  cors({
+    origin: [
+      "http://localhost:3000",
+      "https://game-tracker-52z8bp30p-masa-s-projects3.vercel.app",
+    ],
+    credentials: true,
+  })
+);
+
 app.use(express.json());
 app.use("/ai", aiRoutes);
 app.use("/games", gameRoutes);

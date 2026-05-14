@@ -54,7 +54,7 @@ function App() {
       return;
     }
 
-    const res = await axios.get("http://localhost:5000/games", getAuthConfig());
+    const res = await axios.get(`${process.env.REACT_APP_API_URL}/games`, getAuthConfig());
     setGames(res.data);
   }, [getAuthConfig, token]);
 
@@ -71,7 +71,7 @@ function App() {
     if (!title.trim()) return;
 
     await axios.post(
-      "http://localhost:5000/games",
+      `${process.env.REACT_APP_API_URL}/games`,
       {
         title,
         status,
@@ -87,7 +87,7 @@ function App() {
   const addFromAPI = async (game, selectedStatus) => {
     try {
       await axios.post(
-        "http://localhost:5000/games",
+        `${process.env.REACT_APP_API_URL}/games`,
         {
           title: game.name,
           rawgId: game.id,
@@ -121,7 +121,7 @@ function App() {
 
   const updateStatus = async (id, newStatus) => {
     await axios.put(
-      `http://localhost:5000/games/${id}`,
+      `${process.env.REACT_APP_API_URL}/games/${id}`,
       {
         status: newStatus,
       },
@@ -131,7 +131,7 @@ function App() {
   };
 
   const deleteGame = async (id) => {
-    await axios.delete(`http://localhost:5000/games/${id}`, getAuthConfig());
+    await axios.delete(`${process.env.REACT_APP_API_URL}/games/${id}`, getAuthConfig());
     fetchGames();
   };
 
@@ -165,7 +165,7 @@ function App() {
   const saveGameReview = async (id, userRating, notes) => {
     try {
       const res = await axios.put(
-        `http://localhost:5000/games/${id}`,
+        `${process.env.REACT_APP_API_URL}/games/${id}`,
         {
           userRating,
           notes,
