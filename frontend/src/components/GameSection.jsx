@@ -1,8 +1,10 @@
 import GameCard from "./GameCard";
+import StatusBadge from "./StatusBadge";
 
 function GameSection({
   id,
   title,
+  status,
   games,
   updateStatus,
   deleteGame,
@@ -12,7 +14,13 @@ function GameSection({
 }) {
   return (
     <section className="game-section" id={id}>
-      <h2 className="section-title">{title}</h2>
+      {status ? (
+  <div className="page-title-status">
+    <StatusBadge status={status} />
+  </div>
+) : (
+  <h2>{title}</h2>
+)}
       {controls}
 
       {games.length === 0 ? (

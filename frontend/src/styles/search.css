@@ -356,3 +356,76 @@ body.dark .add-game-panel {
 .add-game-button:hover {
   background: #1d4ed8;
 }
+
+.search-result-action-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+
+  border: none;
+  border-radius: 999px;
+  padding: 7px 11px;
+
+  font-size: 0.8rem;
+  font-weight: 700;
+  cursor: pointer;
+
+  transition: transform 0.15s ease, filter 0.15s ease;
+}
+
+.search-result-action-button:hover {
+  transform: translateY(-1px);
+  filter: brightness(0.96);
+}
+
+.search-result-action-button svg {
+  font-size: 0.75rem;
+}
+
+.search-result-action-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 6px 9px;
+  border-radius: 999px;
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+.search-result-action-button .add-prefix {
+  font-size: 0.85rem;
+  font-weight: 900;
+  line-height: 1;
+}
+
+.search-result-actions-container {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.search-result-actions-label {
+  font-size: 0.72rem;
+  line-height: 1;
+  margin-bottom: 0;
+  margin-top: 4px;
+  color: #64748b;
+  font-weight: 700;
+}
+
+.search-result-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 0;
+}
+
+.search-result-existing {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.search-result-existing .status-badge {
+  margin: 0;
+}

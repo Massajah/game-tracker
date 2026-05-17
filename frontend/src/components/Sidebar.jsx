@@ -1,5 +1,12 @@
 import { useState } from "react";
 import { NavLink } from "react-router-dom";
+import {
+  FaHome,
+  FaHeart,
+  FaBook,
+  FaGamepad,
+  FaCheck,
+} from "react-icons/fa";
 
 function Sidebar({ user, logout, stats, theme, setTheme }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -41,19 +48,24 @@ function Sidebar({ user, logout, stats, theme, setTheme }) {
 
           <nav className="sidebar-nav">
             <NavLink to="/" onClick={closeMobileMenu}>
-              Home
+              <FaHome />
+              <span>Home</span>
             </NavLink>
             <NavLink to="/wishlist" onClick={closeMobileMenu}>
-              Wishlist
+              <FaHeart />
+              <span>Wishlist</span>
             </NavLink>
             <NavLink to="/backlog" onClick={closeMobileMenu}>
-              Backlog
+              <FaBook />
+              <span>Backlog</span>
             </NavLink>
             <NavLink to="/playing" onClick={closeMobileMenu}>
-              Playing
+              <FaGamepad />
+              <span>Playing</span>
             </NavLink>
             <NavLink to="/completed" onClick={closeMobileMenu}>
-              Completed
+              <FaCheck />
+              <span>Completed</span>
             </NavLink>
           </nav>
 

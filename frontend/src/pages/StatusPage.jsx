@@ -246,6 +246,7 @@ function StatusPage({
     <GameSection
       id={status}
       title={title}
+      status={status}
       games={filteredGames}
       updateStatus={updateStatus}
       deleteGame={deleteGame}

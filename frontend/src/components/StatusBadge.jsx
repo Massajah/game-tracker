@@ -5,7 +5,7 @@ import {
   FaCheck,
 } from "react-icons/fa";
 
-const statusConfig = {
+export const statusConfig = {
   wishlist: {
     icon: <FaHeart />,
     label: "Wishlist",

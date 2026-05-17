@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import axios from "axios";
+import StatusBadge, { statusConfig } from "./StatusBadge";
 
 function SearchBar({
   addFromAPI,
@@ -145,10 +146,14 @@ function SearchBar({
                       <div className="search-result-info">
                         <span className="search-result-title">{game.name}</span>
 
-                        {alreadyAdded ? (
+                        {justAdded ? (
+  <span className="search-result-added">
+    Added to <StatusBadge status={existingGame.status} />
+  </span>
+) : alreadyAdded ? (
   <div className="search-result-existing">
     <span className="search-result-added">
-      Already in {formatStatus(existingGame.status)}
+      Already in <StatusBadge status={existingGame.status} />
     </span>
 
     <button
@@ -162,10 +167,6 @@ function SearchBar({
       Remove
     </button>
   </div>
-) : justAdded ? (
-  <span className="search-result-added">
-    Added to {formatStatus(justAddedStatus)}
-  </span>
 ) : (
   game.released && (
     <span className="search-result-meta">
@@ -174,21 +175,34 @@ function SearchBar({
   )
 )}
                         {!alreadyAdded && !justAdded && (
+  <div className="search-result-actions-container">
+
+  <span className="search-result-actions-label">
+    Add to:
+  </span>
+
   <div className="search-result-actions">
-    {["wishlist", "backlog", "playing", "completed"].map((status) => (
-      <button
-        key={status}
-        type="button"
-        className="search-result-action-button"
-        onClick={(e) => {
-          e.stopPropagation();
-          handleAddGame(game, status);
-        }}
-      >
-        + {formatStatus(status)}
-      </button>
-    ))}
+    {["wishlist", "backlog", "playing", "completed"].map((status) => {
+      const config = statusConfig[status];
+
+      return (
+        <button
+          key={status}
+          type="button"
+          className={`search-result-action-button ${config.className}`}
+          onClick={(e) => {
+            e.stopPropagation();
+            handleAddGame(game, status);
+          }}
+        >
+          {config.icon}
+          <span>{config.label}</span>
+        </button>
+      );
+    })}
   </div>
+
+</div>
 )}
                       </div>
                     </div>

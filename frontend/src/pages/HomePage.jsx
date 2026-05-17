@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
+import StatusBadge from "../components/StatusBadge";
 
 function HomePage({ games, openGameDetails, fetchGames }) {
   const [aiRecommendation, setAiRecommendation] = useState(null);
@@ -254,7 +255,7 @@ function HomePage({ games, openGameDetails, fetchGames }) {
 
                 <div className="home-mini-card-content">
                   <h3>{game.title}</h3>
-                  <p>{game.status}</p>
+                  <StatusBadge status={game.status} />
                   {game.userRating && (
                     <span className="home-rating">
                       Rating: {game.userRating}/10
@@ -304,7 +305,7 @@ function HomePage({ games, openGameDetails, fetchGames }) {
                     Tonight&apos;s pick
                   </span>
                   <h3>{randomBacklogGame.title}</h3>
-                  <p>{randomBacklogGame.status}</p>
+                  <StatusBadge status={randomBacklogGame.status} />
                 </div>
               </div>
             )}
@@ -458,7 +459,7 @@ function HomePage({ games, openGameDetails, fetchGames }) {
 
                   <div className="top-rated-item-content">
                     <h3>{game.title}</h3>
-                    <p>{game.status}</p>
+                    <StatusBadge status={game.status} />
                   </div>
 
                   <div className="top-rated-score">
@@ -494,7 +495,7 @@ function HomePage({ games, openGameDetails, fetchGames }) {
 
                 <div className="home-mini-card-content">
                   <h3>{game.title}</h3>
-                  <p>{game.status}</p>
+                  <StatusBadge status={game.status} />
                   {game.userRating && (
                     <span className="home-rating">
                       Rating: {game.userRating}/10

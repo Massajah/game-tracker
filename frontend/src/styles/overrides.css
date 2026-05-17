@@ -231,3 +231,8 @@ body.dark .search-result-remove-button:hover {
   background: #dc2626;
   color: white;
 }
+
+.page-title-status .status-badge {
+  font-size: 1rem;
+  padding: 10px 14px;
+}
