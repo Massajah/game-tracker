@@ -81,3 +81,78 @@ body.dark .secondary-button:hover {
   box-shadow: 0 0 12px rgba(37, 99, 235, 0.35);
   transform: translateY(-1px);
 }
+
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+
+  padding: 6px 10px;
+  border-radius: 999px;
+
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.status-badge svg {
+  font-size: 0.8rem;
+}
+
+.status-wishlist {
+  background: rgba(59,130,246,.15);
+  color: #2563eb;
+}
+
+.status-backlog {
+  background: rgba(139,92,246,.15);
+  color: #7c3aed;
+}
+
+.status-playing {
+  background: rgba(34,197,94,.15);
+  color: #16a34a;
+}
+
+.status-completed {
+  background: rgba(245,158,11,.15);
+  color: #d97706;
+}
+
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+
+  padding: 7px 12px;
+  border-radius: 999px;
+
+  font-size: 0.75rem;
+  font-weight: 700;
+
+  width: fit-content;
+  margin-top: 6px;
+}
+
+.status-badge svg {
+  font-size: 0.75rem;
+}
+
+.status-wishlist {
+  background: rgba(59,130,246,.12);
+  color: #2563eb;
+}
+
+.status-backlog {
+  background: rgba(168,85,247,.12);
+  color: #9333ea;
+}
+
+.status-playing {
+  background: rgba(34,197,94,.12);
+  color: #16a34a;
+}
+
+.status-completed {
+  background: rgba(245,158,11,.12);
+  color: #d97706;
+}

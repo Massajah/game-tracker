@@ -1,3 +1,5 @@
+import StatusBadge from "../components/StatusBadge";
+
 function GameCard({ game, updateStatus, deleteGame, onClick }) {
   return (
     <div className="game-card" onClick={() => onClick(game)}>
@@ -7,10 +9,10 @@ function GameCard({ game, updateStatus, deleteGame, onClick }) {
 
       <div className="game-card-content">
         <h3 className="game-card-title">{game.title}</h3>
-        <p className="game-card-status">{game.status}</p>
+        <p className="game-card-status"><StatusBadge status={game.status} /></p>
 
         {game.status === "completed" && game.userRating && (
-          <p className="game-card-rating">Rating: {game.userRating}/10</p>
+          <div className="game-card-rating"><span>⭐ {game.userRating}/10</span></div>
         )}
 
         <div className="game-card-actions" onClick={(e) => e.stopPropagation()}>

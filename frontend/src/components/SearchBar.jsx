@@ -9,13 +9,14 @@ function SearchBar({
   manualStatus,
   setManualStatus,
   addManualGame,
+  deleteGame,
 }) {
   const [search, setSearch] = useState("");
   const [results, setResults] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [selectedStatus, setSelectedStatus] = useState("wishlist");
   const [justAddedGameId, setJustAddedGameId] = useState(null);
   const [justAddedStatus, setJustAddedStatus] = useState("");
+  const [showManualAdd, setShowManualAdd] = useState(false);
   const [message, setMessage] = useState("");
   const searchRef = useRef(null);
 
@@ -62,12 +63,12 @@ function SearchBar({
     };
   }, []);
 
-  const handleAddGame = async (game) => {
-    const result = await addFromAPI(game, selectedStatus);
+  const handleAddGame = async (game, status) => {
+    const result = await addFromAPI(game, status);
 
     if (result?.success) {
       setJustAddedGameId(game.id);
-      setJustAddedStatus(selectedStatus);
+      setJustAddedStatus(status);
       setMessage("");
 
       setTimeout(() => {
@@ -93,14 +94,24 @@ function SearchBar({
     return status.charAt(0).toUpperCase() + status.slice(1);
   };
 
+  const handleRemoveGame = async (gameId) => {
+  try {
+    await deleteGame(gameId);
+    setMessage("");
+  } catch (error) {
+    setMessage("Failed to remove game");
+  }
+};
+
   return (
     <div className="search-area" ref={searchRef}>
       <div className="search-bar-row">
         <div className="search-bar-wrapper">
+          <h3 className="search-heading">Add games to your library</h3>
           <input
             className="search-input"
             type="text"
-            placeholder="Search games..."
+            placeholder="Search games from RAWG..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
@@ -116,13 +127,11 @@ function SearchBar({
                   const justAdded = justAddedGameId === game.id;
 
                   return (
-                    <button
+                    <div
                       key={game.id}
                       className={`search-result-item ${alreadyAdded || justAdded ? "disabled" : ""
                         }`}
-                      onClick={() =>
-                        !alreadyAdded && !justAdded && handleAddGame(game)
-                      }
+                     
                       disabled={alreadyAdded || justAdded}
                     >
                       {game.background_image && (
@@ -136,44 +145,74 @@ function SearchBar({
                       <div className="search-result-info">
                         <span className="search-result-title">{game.name}</span>
 
-                        {justAdded ? (
-                          <span className="search-result-added">
-                            Added to {formatStatus(justAddedStatus)}
-                          </span>
-                        ) : alreadyAdded ? (
-                          <span className="search-result-added">
-                            Already added ({formatStatus(existingGame.status)})
-                          </span>
-                        ) : (
-                          game.released && (
-                            <span className="search-result-meta">
-                              {game.released}
-                            </span>
-                          )
-                        )}
+                        {alreadyAdded ? (
+  <div className="search-result-existing">
+    <span className="search-result-added">
+      Already in {formatStatus(existingGame.status)}
+    </span>
+
+    <button
+      type="button"
+      className="search-result-remove-button"
+      onClick={(e) => {
+        e.stopPropagation();
+        handleRemoveGame(existingGame._id);
+      }}
+    >
+      Remove
+    </button>
+  </div>
+) : justAdded ? (
+  <span className="search-result-added">
+    Added to {formatStatus(justAddedStatus)}
+  </span>
+) : (
+  game.released && (
+    <span className="search-result-meta">
+      {game.released}
+    </span>
+  )
+)}
+                        {!alreadyAdded && !justAdded && (
+  <div className="search-result-actions">
+    {["wishlist", "backlog", "playing", "completed"].map((status) => (
+      <button
+        key={status}
+        type="button"
+        className="search-result-action-button"
+        onClick={(e) => {
+          e.stopPropagation();
+          handleAddGame(game, status);
+        }}
+      >
+        + {formatStatus(status)}
+      </button>
+    ))}
+  </div>
+)}
                       </div>
-                    </button>
+                    </div>
                   );
                 })
               )}
             </div>
           )}
         </div>
-
-        <select
-          className="search-status-select"
-          value={selectedStatus}
-          onChange={(e) => setSelectedStatus(e.target.value)}
-        >
-          <option value="wishlist">Wishlist</option>
-          <option value="backlog">Backlog</option>
-          <option value="playing">Playing</option>
-          <option value="completed">Completed</option>
-        </select>
       </div>
 
       {message && <p className="search-message">{message}</p>}
 
+<button
+  type="button"
+  className="manual-toggle-button"
+  onClick={() => setShowManualAdd(!showManualAdd)}
+>
+  {showManualAdd
+    ? "Hide manual add ▲"
+    : "Can't find your game? Add manually ▼"}
+</button>
+
+{showManualAdd && (
       <div className="add-game-panel">
         <input
           className="add-game-input"
@@ -197,6 +236,7 @@ function SearchBar({
           Add
         </button>
       </div>
+      )}
     </div>
   );
 }

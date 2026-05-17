@@ -239,6 +239,7 @@ function App() {
                 manualStatus={status}
                 setManualStatus={setStatus}
                 addManualGame={addGame}
+                deleteGame={deleteGame}
               />
             </div>
           </>

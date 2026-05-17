@@ -462,7 +462,7 @@ function HomePage({ games, openGameDetails, fetchGames }) {
                   </div>
 
                   <div className="top-rated-score">
-                    Rating: {game.userRating}/10
+                    <span>⭐ {game.userRating}/10</span>
                   </div>
                 </div>
               ))}
