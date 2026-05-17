@@ -16,7 +16,6 @@ function SearchBar({
   const [results, setResults] = useState([]);
   const [loading, setLoading] = useState(false);
   const [justAddedGameId, setJustAddedGameId] = useState(null);
-  const [justAddedStatus, setJustAddedStatus] = useState("");
   const [showManualAdd, setShowManualAdd] = useState(false);
   const [message, setMessage] = useState("");
   const searchRef = useRef(null);
@@ -69,12 +68,10 @@ function SearchBar({
 
     if (result?.success) {
       setJustAddedGameId(game.id);
-      setJustAddedStatus(status);
       setMessage("");
 
       setTimeout(() => {
         setJustAddedGameId(null);
-        setJustAddedStatus("");
       }, 2500);
 
       setTimeout(() => {
@@ -89,10 +86,6 @@ function SearchBar({
 
   const getExistingGame = (rawgId) => {
     return games.find((game) => game.rawgId === rawgId);
-  };
-
-  const formatStatus = (status) => {
-    return status.charAt(0).toUpperCase() + status.slice(1);
   };
 
   const handleRemoveGame = async (gameId) => {
