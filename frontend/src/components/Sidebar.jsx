@@ -1,4 +1,5 @@
 import { useState } from "react";
+import logo from "../assets/GT_logo.png";
 import { NavLink } from "react-router-dom";
 import {
   FaHome,
@@ -19,7 +20,7 @@ function Sidebar({ user, logout, stats, theme, setTheme }) {
     <>
       <div className="mobile-topbar">
         <div className="mobile-logo">
-          <div className="logo-mark">GT</div>
+          <div className="logo-mark"><img src={logo} alt="GameTracker" /></div>
           <span>GameTracker</span>
         </div>
 
@@ -38,7 +39,7 @@ function Sidebar({ user, logout, stats, theme, setTheme }) {
       <aside className={`sidebar ${mobileMenuOpen ? "mobile-open" : ""}`}>
         <div className="sidebar-top">
           <div className="sidebar-logo">
-            <div className="logo-mark">GT</div>
+            <div className="logo-mark"><img src={logo} alt="GameTracker" /></div>
 
             <div>
               <h2>GameTracker</h2>

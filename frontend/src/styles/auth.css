@@ -40,13 +40,23 @@
 }
 
 .auth-features {
-  display: grid;
+  display: flex;
+  flex-direction: column;
   gap: 12px;
-  margin-top: 28px;
+  margin-top: 30px;
 }
 
 .auth-feature {
-  color: #e5e7eb;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: #d0d7e2;
+}
+
+.feature-icon {
+  color: #5a8dff;
+  font-size: 14px;
+  flex-shrink: 0;
 }
 
 .auth-form-side {
@@ -135,4 +145,31 @@
 .auth-switch a {
   color: #2563eb;
   font-weight: 700;
+}
+
+.auth-logo {
+  width: 72px;
+  height: 72px;
+  object-fit: contain;
+  display: block;
+  margin: 0 auto 8px;
+  margin-bottom: 14px;
+}
+
+.auth-subtitle {
+  display: flex;
+  flex-direction: column;
+  font-size: 16px;
+  gap: 4px;
+  color: #777;
+  margin-bottom: 6px;
+  line-height: 1.2;
+}
+
+.auth-subtitle span:first-child {
+  font-weight: 300;
+}
+
+.auth-title {
+  margin-bottom: 10px;
 }

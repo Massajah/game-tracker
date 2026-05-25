@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
+import { FaList, FaStar, FaRobot } from "react-icons/fa";
 
 function LoginPage({ setUser, setToken }) {
   const [email, setEmail] = useState("");
@@ -110,7 +111,7 @@ function LoginPage({ setUser, setToken }) {
   return (
     <div className="auth-page">
       <div className="auth-hero">
-        <div className="auth-hero-badge">Game-Tracker</div>
+        <div className="auth-hero-badge">GameTracker</div>
         <h1>
           Track your games. <span>Find what to play next.</span>
         </h1>
@@ -121,17 +122,32 @@ function LoginPage({ setUser, setToken }) {
 
         <div className="auth-features">
           <div className="auth-feature">
-            Organize wishlist, backlog and completed games
+            <FaList className="feature-icon" />
+    <span>Organize wishlist, backlog and completed games</span>
           </div>
-          <div className="auth-feature">Rate and review your completed games</div>
-          <div className="auth-feature">Get AI-powered game suggestions</div>
+          <div className="auth-feature">
+            <FaStar className="feature-icon" />
+    <span>Rate and review your completed games</span>
+            </div>
+          <div className="auth-feature">
+            <FaRobot className="feature-icon" />
+    <span>Get AI-powered game suggestions</span>
+          </div>
         </div>
       </div>
 
       <div className="auth-form-side">
         <form className="auth-card" onSubmit={handleSubmit}>
-          <h1>Login</h1>
-          <p>Welcome back to GameTracker.</p>
+          <img
+  src="/logo192.png"
+  alt="GameTracker logo"
+  className="auth-logo"
+/>
+          <h1 className="auth-title">Login</h1>
+          <div className="auth-subtitle">
+  <span>Welcome back!</span>
+  <span>Sign in to continue your game journey.</span>
+</div>
 
           {successMessage && (
             <div className="auth-success">{successMessage}</div>
