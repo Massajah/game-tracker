@@ -163,7 +163,7 @@
 
 .game-card-actions select,
 .game-card-actions button {
-  padding: 8px;
+  padding: 10px 12px;
   border: 1px solid #d1d5db;
   border-radius: 8px;
   background: white;
@@ -174,31 +174,48 @@
 }
 
 .delete-button {
-  background: #fcf8f8;
+  background: #ff6969;
   border: 1px solid #d1d5db;
-  color: #374151;
+  color: #b91c1c;
   transition: all 0.2s ease;
+  margin-top: 8px;
+  font-weight: 600;
+  transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
 }
 
 .delete-button:hover {
-  background: #dc2626;
-  border-color: #dc2626;
-  color: white;
-  box-shadow: 0 0 12px rgba(220, 38, 38, 0.3);
-  transform: translateY(-1px);
+  background: #fee2e2;
+  color: #b91c1c;
+  border-color: #fca5a5;
+  
 }
 
 .dark .delete-button {
   background: rgba(255, 255, 255, 0.06);
   border: 1px solid rgba(255, 255, 255, 0.08);
-  color: #e5e7eb;
+  color: #f87171;
   transition: all 0.2s ease;
 }
 
 .dark .delete-button:hover {
-  background: #dc2626;
-  border-color: #ef4444;
-  color: white;
-  box-shadow: 0 0 12px rgba(220, 38, 38, 0.3);
-  transform: translateY(-1px);
+  background: rgba(239, 68, 68, 0.16);
+  border-color: rgba(248, 113, 113, 0.55);
+  color: #f87171;
+}
+
+.game-status-select {
+  width: 100%;
+  margin-top: 10px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid #dbe3ef;
+  background: #f8fafc;
+  color: #0f172a;
+  font-weight: 600;
+}
+
+body.dark .game-status-select {
+  background: #111827;
+  border-color: #334155;
+  color: #e5e7eb;
 }

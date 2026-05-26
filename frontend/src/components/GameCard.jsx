@@ -17,6 +17,7 @@ function GameCard({ game, updateStatus, deleteGame, onClick }) {
 
         <div className="game-card-actions" onClick={(e) => e.stopPropagation()}>
           <select
+          className="game-status-select"
             value={game.status}
             onChange={(e) => updateStatus(game._id, e.target.value)}
           >
