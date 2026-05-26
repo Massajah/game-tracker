@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import axios from "axios";
 import StatusBadge, { statusConfig } from "./StatusBadge";
+import { getOptimizedImage } from "../utils/images";
 
 function SearchBar({
   addFromAPI,
@@ -18,6 +19,7 @@ function SearchBar({
   const [justAddedGameId, setJustAddedGameId] = useState(null);
   const [showManualAdd, setShowManualAdd] = useState(false);
   const [message, setMessage] = useState("");
+  const [openAddMenuId, setOpenAddMenuId] = useState(null);
   const searchRef = useRef(null);
 
   useEffect(() => {
@@ -130,9 +132,11 @@ function SearchBar({
                     >
                       {game.background_image && (
                         <img
-                          src={game.background_image}
+                          src={getOptimizedImage(game.background_image)}
                           alt={game.name}
                           className="search-result-image"
+                          loading="lazy"
+                          decoding="async"
                         />
                       )}
 
@@ -169,32 +173,40 @@ function SearchBar({
 )}
                         {!alreadyAdded && !justAdded && (
   <div className="search-result-actions-container">
+  <button
+    type="button"
+    className="search-result-add-toggle"
+    onClick={(e) => {
+      e.stopPropagation();
+      setOpenAddMenuId(openAddMenuId === game.id ? null : game.id);
+    }}
+  >
+    + Add
+  </button>
 
-  <span className="search-result-actions-label">
-    Add to:
-  </span>
+  {openAddMenuId === game.id && (
+    <div className="search-result-actions">
+      {["wishlist", "backlog", "playing", "completed"].map((status) => {
+        const config = statusConfig[status];
 
-  <div className="search-result-actions">
-    {["wishlist", "backlog", "playing", "completed"].map((status) => {
-      const config = statusConfig[status];
-
-      return (
-        <button
-          key={status}
-          type="button"
-          className={`search-result-action-button ${config.className}`}
-          onClick={(e) => {
-            e.stopPropagation();
-            handleAddGame(game, status);
-          }}
-        >
-          {config.icon}
-          <span>{config.label}</span>
-        </button>
-      );
-    })}
-  </div>
-
+        return (
+          <button
+            key={status}
+            type="button"
+            className={`search-result-action-button ${config.className}`}
+            onClick={(e) => {
+              e.stopPropagation();
+              handleAddGame(game, status);
+              setOpenAddMenuId(null);
+            }}
+          >
+            {config.icon}
+            <span>{config.label}</span>
+          </button>
+        );
+      })}
+    </div>
+  )}
 </div>
 )}
                       </div>

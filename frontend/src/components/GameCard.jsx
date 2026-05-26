@@ -1,10 +1,17 @@
 import StatusBadge from "../components/StatusBadge";
+import { getOptimizedImage } from "../utils/images";
 
 function GameCard({ game, updateStatus, deleteGame, onClick }) {
   return (
     <div className="game-card" onClick={() => onClick(game)}>
       {game.image && (
-        <img src={game.image} alt={game.title} className="game-card-image" />
+        <img
+          src={getOptimizedImage(game.image)}
+          alt={game.title}
+          className="game-card-image"
+          loading="lazy"
+          decoding="async"
+        />
       )}
 
       <div className="game-card-content">

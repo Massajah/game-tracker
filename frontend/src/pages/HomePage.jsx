@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import StatusBadge from "../components/StatusBadge";
+import { getOptimizedImage } from "../utils/images";
 
 function HomePage({ games, openGameDetails, fetchGames }) {
   const [aiRecommendation, setAiRecommendation] = useState(null);
@@ -14,11 +15,11 @@ function HomePage({ games, openGameDetails, fetchGames }) {
 
   const playingGames = games
     .filter((game) => game.status === "playing")
-    .slice(0, 4);
+    .slice(0, 9);
 
   const recentGames = [...games]
     .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
-    .slice(0, 4);
+    .slice(0, 9);
 
   const topRatedGames = [...games]
     .filter((game) => game.userRating)
@@ -229,6 +230,7 @@ function HomePage({ games, openGameDetails, fetchGames }) {
 
   const aiRecommendationImage =
     aiRecommendation?.image || aiRecommendation?.background_image;
+  const optimizedAIRecommendationImage = getOptimizedImage(aiRecommendationImage);
 
   return (
     <div className="home-page">
@@ -247,9 +249,11 @@ function HomePage({ games, openGameDetails, fetchGames }) {
               >
                 {game.image && (
                   <img
-                    src={game.image}
+                    src={getOptimizedImage(game.image)}
                     alt={game.title}
                     className="home-mini-card-image"
+                    loading="lazy"
+                    decoding="async"
                   />
                 )}
 
@@ -294,9 +298,11 @@ function HomePage({ games, openGameDetails, fetchGames }) {
               >
                 {randomBacklogGame.image && (
                   <img
-                    src={randomBacklogGame.image}
+                    src={getOptimizedImage(randomBacklogGame.image)}
                     alt={randomBacklogGame.title}
                     className="featured-backlog-image"
+                    loading="lazy"
+                    decoding="async"
                   />
                 )}
 
@@ -344,11 +350,11 @@ function HomePage({ games, openGameDetails, fetchGames }) {
 
             {aiRecommendation && !aiLoading && (
               <div className="ai-recommendation-card">
-                {aiRecommendationImage ? (
+                {optimizedAIRecommendationImage ? (
                   <div
                     className="ai-recommendation-hero"
                     style={{
-                      backgroundImage: `url(${aiRecommendationImage})`,
+                      backgroundImage: `url(${optimizedAIRecommendationImage})`,
                     }}
                   >
                     <div className="ai-recommendation-overlay">
@@ -451,9 +457,11 @@ function HomePage({ games, openGameDetails, fetchGames }) {
                 >
                   {game.image && (
                     <img
-                      src={game.image}
+                      src={getOptimizedImage(game.image)}
                       alt={game.title}
                       className="top-rated-item-image"
+                      loading="lazy"
+                      decoding="async"
                     />
                   )}
 
@@ -487,9 +495,11 @@ function HomePage({ games, openGameDetails, fetchGames }) {
               >
                 {game.image && (
                   <img
-                    src={game.image}
+                    src={getOptimizedImage(game.image)}
                     alt={game.title}
                     className="home-mini-card-image"
+                    loading="lazy"
+                    decoding="async"
                   />
                 )}
 

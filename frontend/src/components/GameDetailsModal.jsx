@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { getOptimizedImage } from "../utils/images";
 
 function GameDetailsModal({ game, details, loading, onClose, saveGameReview }) {
   const [rating, setRating] = useState("");
@@ -63,9 +64,11 @@ function GameDetailsModal({ game, details, loading, onClose, saveGameReview }) {
 
         {game.image && (
           <img
-            src={game.image}
+            src={getOptimizedImage(game.image)}
             alt={game.title}
             className="game-modal-image"
+            loading="lazy"
+            decoding="async"
           />
         )}
 
