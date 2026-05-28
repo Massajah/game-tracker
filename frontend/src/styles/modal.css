@@ -25,10 +25,7 @@
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
-.game-modal:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.3);
-}
+
 
 .game-modal-image {
   width: 100%;
@@ -234,4 +231,74 @@
   background: #fee2e2;
   color: #991b1b;
   border: 1px solid #fca5a5;
+}
+
+.preview-add-section {
+  margin-top: 18px;
+  padding-top: 16px;
+  border-top: 1px solid #e5e7eb;
+}
+
+.preview-add-text {
+  margin: 0 0 10px;
+  font-weight: 700;
+}
+
+.preview-add-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.preview-add-button {
+  border: none;
+  border-radius: 999px;
+  padding: 8px 12px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.preview-add-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.preview-add-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+
+  border: none;
+  border-radius: 999px;
+  padding: 8px 12px;
+
+  font-size: 0.85rem;
+  font-weight: 700;
+  cursor: pointer;
+
+  transition: transform 0.15s ease, filter 0.15s ease;
+}
+
+.preview-add-button:hover {
+  transform: translateY(-1px);
+  filter: brightness(0.96);
+}
+
+.preview-add-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.65;
+  transform: none;
+}
+
+.preview-add-button svg {
+  font-size: 0.8rem;
+}
+
+.app-feedback-toast {
+  position: fixed;
+  right: 24px;
+  bottom: 24px;
+  z-index: 3000;
+  box-shadow: 0 12px 30px rgba(15, 23, 42, 0.18);
 }

@@ -74,7 +74,7 @@
   border-bottom: 1px solid #f3f4f6;
   background: white;
   text-align: left;
-  cursor: default;
+  cursor: pointer;
 }
 
 .search-result-item:last-child {
@@ -87,7 +87,7 @@
 
 .search-result-item.disabled {
   opacity: 0.6;
-  cursor: not-allowed;
+  cursor: pointer;
   background: #f9fafb;
 }
 
@@ -491,4 +491,15 @@ body.dark .search-result-add-toggle:hover {
   padding: 0 10px;
   font-size: 0.76rem;
   line-height: 1;
+}
+
+.search-result-main {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+}
+
+.search-result-main:hover h4 {
+  text-decoration: underline;
 }

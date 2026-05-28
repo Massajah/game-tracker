@@ -12,6 +12,7 @@ function SearchBar({
   setManualStatus,
   addManualGame,
   deleteGame,
+  openGameDetails
 }) {
   const [search, setSearch] = useState("");
   const [results, setResults] = useState([]);
@@ -91,13 +92,31 @@ function SearchBar({
   };
 
   const handleRemoveGame = async (gameId) => {
-  try {
-    await deleteGame(gameId);
-    setMessage("");
-  } catch (error) {
-    setMessage("Failed to remove game");
-  }
-};
+    try {
+      await deleteGame(gameId);
+      setMessage("");
+    } catch (error) {
+      setMessage("Failed to remove game");
+    }
+  };
+
+  const createPreviewGame = (game) => {
+    const existingGame = getExistingGame(game.id);
+
+    return {
+      title: game.name,
+      image: game.background_image || null,
+      rawgId: game.id,
+      released: game.released || null,
+      rating: null,
+      status: null,
+      existingStatus: existingGame?.status || null,
+      genres: game.genres?.map((genre) => genre.name) || [],
+      platforms: game.platforms?.map((p) => p.platform.name) || [],
+      description: game.description_raw || "",
+      isPreview: true,
+    };
+  };
 
   return (
     <div className="search-area" ref={searchRef}>
@@ -127,88 +146,89 @@ function SearchBar({
                       key={game.id}
                       className={`search-result-item ${alreadyAdded || justAdded ? "disabled" : ""
                         }`}
-                     
-                      disabled={alreadyAdded || justAdded}
-                    >
-                      {game.background_image && (
-                        <img
-                          src={getOptimizedImage(game.background_image)}
-                          alt={game.name}
-                          className="search-result-image"
-                          loading="lazy"
-                          decoding="async"
-                        />
-                      )}
+                      onClick={() => openGameDetails(createPreviewGame(game))}
+                    ><div className="search-result-main">
+                        {game.background_image && (
+                          <img
+                            src={getOptimizedImage(game.background_image)}
+                            alt={game.name}
+                            className="search-result-image"
+                            loading="lazy"
+                            decoding="async"
+                          />
+                        )}
 
-                      <div className="search-result-info">
-                        <span className="search-result-title">{game.name}</span>
+                        <div className="search-result-info">
+                          <span className="search-result-title">{game.name}</span>
 
-                        {justAdded ? (
-  <span className="search-result-added">
-    Added to <StatusBadge status={existingGame.status} />
-  </span>
-) : alreadyAdded ? (
-  <div className="search-result-existing">
-    <span className="search-result-added">
-      Already in <StatusBadge status={existingGame.status} />
-    </span>
+                          {justAdded ? (
+                            <span className="search-result-added">
+                              Added to <StatusBadge status={existingGame.status} />
+                            </span>
+                          ) : alreadyAdded ? (
+                            <div className="search-result-existing">
+                              <span className="search-result-added">
+                                Already in <StatusBadge status={existingGame.status} />
+                              </span>
 
-    <button
-      type="button"
-      className="search-result-remove-button"
-      onClick={(e) => {
-        e.stopPropagation();
-        handleRemoveGame(existingGame._id);
-      }}
-    >
-      Remove
-    </button>
-  </div>
-) : (
-  game.released && (
-    <span className="search-result-meta">
-      {game.released}
-    </span>
-  )
-)}
-                        {!alreadyAdded && !justAdded && (
-  <div className="search-result-actions-container">
-  <button
-    type="button"
-    className="search-result-add-toggle"
-    onClick={(e) => {
-      e.stopPropagation();
-      setOpenAddMenuId(openAddMenuId === game.id ? null : game.id);
-    }}
-  >
-    + Add
-  </button>
+                              <button
+                                type="button"
+                                className="search-result-remove-button"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleRemoveGame(existingGame._id);
+                                }}
+                              >
+                                Remove
+                              </button>
+                            </div>
+                          ) : (
+                            game.released && (
+                              <span className="search-result-meta">
+                                {game.released}
+                              </span>
+                            )
+                          )}
+                          {!alreadyAdded && !justAdded && (
+                            <div className="search-result-actions-container">
+                              <button
+                                type="button"
+                                className="search-result-add-toggle"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  setOpenAddMenuId(openAddMenuId === game.id ? null : game.id);
+                                }}
+                              >
+                                + Add
+                              </button>
 
-  {openAddMenuId === game.id && (
-    <div className="search-result-actions">
-      {["wishlist", "backlog", "playing", "completed"].map((status) => {
-        const config = statusConfig[status];
+                              {openAddMenuId === game.id && (
+                                <div className="search-result-actions">
+                                  {["wishlist", "backlog", "playing", "completed"].map((status) => {
+                                    const config = statusConfig[status];
 
-        return (
-          <button
-            key={status}
-            type="button"
-            className={`search-result-action-button ${config.className}`}
-            onClick={(e) => {
-              e.stopPropagation();
-              handleAddGame(game, status);
-              setOpenAddMenuId(null);
-            }}
-          >
-            {config.icon}
-            <span>{config.label}</span>
-          </button>
-        );
-      })}
-    </div>
-  )}
-</div>
-)}
+                                    return (
+                                      <button
+                                        key={status}
+                                        type="button"
+                                        className={`search-result-action-button ${config.className}`}
+                                        onClick={(e) => {
+                                          e.stopPropagation();
+                                          handleAddGame(game, status);
+                                          setOpenAddMenuId(null);
+                                        }}
+                                      >
+                                        {config.icon}
+                                        <span>{config.label}</span>
+                                      </button>
+                                    );
+                                  })}
+                                </div>
+                              )}
+                            </div>
+
+                          )}
+                        </div>
                       </div>
                     </div>
                   );
@@ -221,40 +241,40 @@ function SearchBar({
 
       {message && <p className="search-message">{message}</p>}
 
-<button
-  type="button"
-  className="manual-toggle-button"
-  onClick={() => setShowManualAdd(!showManualAdd)}
->
-  {showManualAdd
-    ? "Hide manual add ▲"
-    : "Can't find your game? Add manually ▼"}
-</button>
+      <button
+        type="button"
+        className="manual-toggle-button"
+        onClick={() => setShowManualAdd(!showManualAdd)}
+      >
+        {showManualAdd
+          ? "Hide manual add ▲"
+          : "Can't find your game? Add manually ▼"}
+      </button>
 
-{showManualAdd && (
-      <div className="add-game-panel">
-        <input
-          className="add-game-input"
-          value={manualTitle}
-          onChange={(e) => setManualTitle(e.target.value)}
-          placeholder="Add game manually"
-        />
+      {showManualAdd && (
+        <div className="add-game-panel">
+          <input
+            className="add-game-input"
+            value={manualTitle}
+            onChange={(e) => setManualTitle(e.target.value)}
+            placeholder="Add game manually"
+          />
 
-        <select
-          className="add-game-select"
-          value={manualStatus}
-          onChange={(e) => setManualStatus(e.target.value)}
-        >
-          <option value="wishlist">Wishlist</option>
-          <option value="backlog">Backlog</option>
-          <option value="playing">Playing</option>
-          <option value="completed">Completed</option>
-        </select>
+          <select
+            className="add-game-select"
+            value={manualStatus}
+            onChange={(e) => setManualStatus(e.target.value)}
+          >
+            <option value="wishlist">Wishlist</option>
+            <option value="backlog">Backlog</option>
+            <option value="playing">Playing</option>
+            <option value="completed">Completed</option>
+          </select>
 
-        <button className="add-game-button" onClick={addManualGame}>
-          Add
-        </button>
-      </div>
+          <button className="add-game-button" onClick={addManualGame}>
+            Add
+          </button>
+        </div>
       )}
     </div>
   );

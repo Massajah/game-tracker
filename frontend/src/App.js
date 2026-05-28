@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import axios from "axios";
 import { Navigate, Route, Routes, useLocation } from "react-router-dom";
 import SearchBar from "./components/SearchBar";
@@ -26,6 +26,8 @@ function App() {
   const [selectedGame, setSelectedGame] = useState(null);
   const [gameDetails, setGameDetails] = useState(null);
   const [detailsLoading, setDetailsLoading] = useState(false);
+  const [addFeedback, setAddFeedback] = useState(null);
+  const addFeedbackTimerRef = useRef(null);
   const [user, setUser] = useState(() => {
     const savedUser = localStorage.getItem("user");
     return savedUser ? JSON.parse(savedUser) : null;
@@ -66,6 +68,26 @@ function App() {
   useEffect(() => {
     fetchGames();
   }, [fetchGames]);
+
+  useEffect(() => {
+    return () => {
+      if (addFeedbackTimerRef.current) {
+        clearTimeout(addFeedbackTimerRef.current);
+      }
+    };
+  }, []);
+
+  const showAddFeedback = (message) => {
+    if (addFeedbackTimerRef.current) {
+      clearTimeout(addFeedbackTimerRef.current);
+    }
+
+    setAddFeedback(message);
+    addFeedbackTimerRef.current = setTimeout(() => {
+      setAddFeedback(null);
+      addFeedbackTimerRef.current = null;
+    }, 2500);
+  };
 
   const addGame = async () => {
     if (!title.trim()) return;
@@ -240,6 +262,7 @@ function App() {
                 setManualStatus={setStatus}
                 addManualGame={addGame}
                 deleteGame={deleteGame}
+                openGameDetails={openGameDetails}
               />
             </div>
           </>
@@ -338,7 +361,15 @@ function App() {
         loading={detailsLoading}
         onClose={closeGameDetails}
         saveGameReview={saveGameReview}
+        addFromAPI={addFromAPI}
+        onAddSuccess={showAddFeedback}
       />
+
+      {addFeedback && (
+        <div className="save-message-box success app-feedback-toast">
+          {addFeedback}
+        </div>
+      )}
     </div>
   );
 }
