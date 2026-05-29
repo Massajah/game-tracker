@@ -503,3 +503,68 @@ body.dark .search-result-add-toggle:hover {
 .search-result-main:hover h4 {
   text-decoration: underline;
 }
+
+.dark .search-results-dropdown {
+  background: #111827;
+  border-color: #1f2937;
+}
+
+.dark .search-result-item {
+  background: #111827;
+  border-bottom: 1px solid #1f2937;
+}
+
+.dark .search-result-title {
+  color: #f3f4f6;
+}
+
+.dark .search-result-meta {
+  color: #9ca3af;
+}
+
+
+.dark .search-result-action-button:hover {
+  background: #374151;
+}
+
+.dark .search-result-add-toggle {
+  background: #2563eb;
+  color: white;
+  border: none;
+}
+
+.dark .search-result-add-toggle:hover {
+  background: #3b82f6;
+}
+
+.search-result-item:hover {
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.search-result-item:hover {
+  background: #eef1fd;
+}
+
+.dark .search-result-item:hover {
+  background: #2c3441;
+}
+
+.dark .search-result-action-button.status-wishlist {
+  background: rgba(37, 99, 235, 0.2);
+  color: #93c5fd;
+}
+
+.dark .search-result-action-button.status-backlog {
+  background: rgba(147, 51, 234, 0.22);
+  color: #d8b4fe;
+}
+
+.dark .search-result-action-button.status-playing {
+  background: rgba(22, 163, 74, 0.22);
+  color: #86efac;
+}
+
+.dark .search-result-action-button.status-completed {
+  background: rgba(234, 88, 12, 0.22);
+  color: #fdba74;
+}

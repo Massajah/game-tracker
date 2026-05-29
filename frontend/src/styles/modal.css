@@ -208,17 +208,16 @@
 }
 
 .save-message-area {
-  min-height: 30px;
-  margin-bottom: 12px;
+  min-height: 36px;
+  margin-top: 10px;
 }
 
 .save-message-box {
-  margin-top: 12px;
-  margin-bottom: 12px;
-  padding: 8px 12px;
+
+  padding: 10px 14px;
   border-radius: 10px;
   font-weight: 600;
-  font-size: 0.88rem;
+  font-size: 0.86rem;
 }
 
 .save-message-box.success {
@@ -268,6 +267,7 @@
   display: inline-flex;
   align-items: center;
   gap: 6px;
+  margin-top: 6px;
 
   border: none;
   border-radius: 999px;
@@ -282,7 +282,7 @@
 
 .preview-add-button:hover {
   transform: translateY(-1px);
-  filter: brightness(0.96);
+  filter: brightness(1.15);
 }
 
 .preview-add-button:disabled {
@@ -295,10 +295,26 @@
   font-size: 0.8rem;
 }
 
-.app-feedback-toast {
-  position: fixed;
-  right: 24px;
-  bottom: 24px;
-  z-index: 3000;
-  box-shadow: 0 12px 30px rgba(15, 23, 42, 0.18);
+.dark .add-game-button {
+  transition: all 0.15s ease;
+}
+
+.dark .status-wishlist {
+  background: rgba(37, 99, 235, 0.25);
+  color: #93c5fd;
+}
+
+.dark .status-backlog {
+  background: rgba(147, 51, 234, 0.25);
+  color: #d8b4fe;
+}
+
+.dark .status-playing {
+  background: rgba(22, 163, 74, 0.25);
+  color: #86efac;
+}
+
+.dark .status-completed {
+  background: rgba(234, 88, 12, 0.25);
+  color: #fdba74;
 }

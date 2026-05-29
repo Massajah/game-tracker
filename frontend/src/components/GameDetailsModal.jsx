@@ -9,16 +9,17 @@ function GameDetailsModal({
   onClose,
   saveGameReview,
   addFromAPI,
-  onAddSuccess,
 }) {
   const [rating, setRating] = useState("");
   const [notes, setNotes] = useState("");
   const [isSaving, setIsSaving] = useState(false);
-  const [saveMessage, setSaveMessage] = useState("");
   const [isAdding, setIsAdding] = useState(false);
   const [addingStatus, setAddingStatus] = useState(null);
-  const [addMessage, setAddMessage] = useState("");
+  const [modalMessage, setModalMessage] = useState(null);
+  const [previewAddedStatus, setPreviewAddedStatus] = useState(null);
   const addInFlightRef = useRef(false);
+  const modalGameKeyRef = useRef(null);
+  const messageTimerRef = useRef(null);
 
   const isCompleted = game?.status === "completed";
 
@@ -37,22 +38,86 @@ function GameDetailsModal({
   }, [onClose]);
 
   useEffect(() => {
-    if (game) {
-      setRating(game.userRating ?? "");
-      setNotes(game.notes ?? "");
-      setSaveMessage("");
-      setAddMessage("");
-      setIsAdding(false);
-      setAddingStatus(null);
-      addInFlightRef.current = false;
+    if (!game) {
+      modalGameKeyRef.current = null;
+      if (messageTimerRef.current) {
+        clearTimeout(messageTimerRef.current);
+        messageTimerRef.current = null;
+      }
+      setModalMessage(null);
+      setPreviewAddedStatus(null);
+      return;
     }
+
+    const modalGameKey = `${game.isPreview ? "preview" : "library"}-${
+      game._id || game.rawgId
+    }`;
+
+    if (modalGameKeyRef.current !== modalGameKey) {
+      modalGameKeyRef.current = modalGameKey;
+      if (messageTimerRef.current) {
+        clearTimeout(messageTimerRef.current);
+        messageTimerRef.current = null;
+      }
+      setModalMessage(null);
+      setPreviewAddedStatus(
+        game.existingStatus
+          ? { gameKey: modalGameKey, status: game.existingStatus }
+          : null
+      );
+    }
+
+    setRating(game.userRating ?? "");
+    setNotes(game.notes ?? "");
+    setIsAdding(false);
+    setAddingStatus(null);
+    addInFlightRef.current = false;
   }, [game]);
+
+  useEffect(() => {
+    return () => {
+      if (messageTimerRef.current) {
+        clearTimeout(messageTimerRef.current);
+      }
+    };
+  }, []);
 
   if (!game) return null;
 
+  const currentModalGameKey = `${game.isPreview ? "preview" : "library"}-${
+    game._id || game.rawgId
+  }`;
+  const currentPreviewStatus = game.isPreview
+    ? game.existingStatus ||
+      (previewAddedStatus?.gameKey === currentModalGameKey
+        ? previewAddedStatus.status
+        : null)
+    : null;
+
+  const clearModalMessage = () => {
+    if (messageTimerRef.current) {
+      clearTimeout(messageTimerRef.current);
+      messageTimerRef.current = null;
+    }
+
+    setModalMessage(null);
+  };
+
+  const showModalMessage = (message) => {
+    clearModalMessage();
+    setModalMessage(message);
+
+    if (message.type === "success") {
+      messageTimerRef.current = setTimeout(() => {
+        setModalMessage(null);
+        messageTimerRef.current = null;
+      }, 2800);
+    }
+  };
+
   const handleSave = async () => {
     setIsSaving(true);
-    setSaveMessage("");
+    clearModalMessage();
 
     const result = await saveGameReview(
       game._id,
@@ -61,16 +126,18 @@ function GameDetailsModal({
     );
 
     if (result.success) {
-      setSaveMessage("Review saved successfully");
+      showModalMessage({
+        type: "success",
+        text: "Review saved successfully.",
+      });
     } else {
-      setSaveMessage(result.message || "Failed to save review");
+      showModalMessage({
+        type: "error",
+        text: result.message || "Failed to save review",
+      });
     }
 
     setIsSaving(false);
-
-    setTimeout(() => {
-      setSaveMessage("");
-    }, 2500);
   };
 
   const previewGameForAdd = {
@@ -96,7 +163,7 @@ function GameDetailsModal({
     addInFlightRef.current = true;
     setIsAdding(true);
     setAddingStatus(selectedStatus);
-    setAddMessage("");
+    clearModalMessage();
 
     try {
       const result = await addFromAPI(previewGameForAdd, selectedStatus);
@@ -104,14 +171,26 @@ function GameDetailsModal({
       if (result?.success) {
         const statusLabel = statusConfig[selectedStatus]?.label || selectedStatus;
 
-        onAddSuccess?.(`${game.title} added to ${statusLabel}`);
-        onClose();
+        setPreviewAddedStatus({
+          gameKey: currentModalGameKey,
+          status: selectedStatus,
+        });
+        showModalMessage({
+          type: "success",
+          text: `${game.title} added to ${statusLabel}.`,
+        });
         return;
       }
 
-      setAddMessage(result?.message || "Failed to add game");
+      showModalMessage({
+        type: "error",
+        text: result?.message || "Failed to add game",
+      });
     } catch {
-      setAddMessage("Failed to add game");
+      showModalMessage({
+        type: "error",
+        text: "Failed to add game",
+      });
     } finally {
       addInFlightRef.current = false;
       setIsAdding(false);
@@ -229,17 +308,6 @@ function GameDetailsModal({
                 />
               </div>
 
-              <div className="save-message-area">
-                {saveMessage && (
-                  <div
-                    className={`save-message-box ${saveMessage.includes("Failed") ? "error" : "success"
-                      }`}
-                  >
-                    {saveMessage}
-                  </div>
-                )}
-              </div>
-
               <button
                 className="save-review-button"
                 onClick={handleSave}
@@ -250,24 +318,16 @@ function GameDetailsModal({
             </div>
           )}
 
-          {game.isPreview && game.existingStatus && (
+          {game.isPreview && currentPreviewStatus && (
             <div className="preview-add-section">
               <p className="preview-add-text">Already in your library:</p>
-              <StatusBadge status={game.existingStatus} />
+              <StatusBadge status={currentPreviewStatus} />
             </div>
           )}
 
-          {game.isPreview && !game.existingStatus && (
+          {game.isPreview && !currentPreviewStatus && (
             <div className="preview-add-section">
               <p className="preview-add-text">Add this game to your library:</p>
-
-              <div className="save-message-area">
-                {addMessage && (
-                  <div className="save-message-box error">
-                    {addMessage}
-                  </div>
-                )}
-              </div>
 
               <div className="preview-add-actions">
                 {["wishlist", "backlog", "playing", "completed"].map((status) => {
@@ -291,6 +351,14 @@ function GameDetailsModal({
               </div>
             </div>
           )}
+
+          <div className="save-message-area">
+            {modalMessage && (
+              <div className={`save-message-box ${modalMessage.type}`}>
+                {modalMessage.text}
+              </div>
+            )}
+          </div>
 
         </div>
       </div>
