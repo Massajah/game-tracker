@@ -13,7 +13,7 @@
   padding: 4px 0;
   border-radius: 10px;
   cursor: pointer;
-  touch-action: manipulation;
+  touch-action: none;
 }
 
 .star-rating-stars:focus-visible {

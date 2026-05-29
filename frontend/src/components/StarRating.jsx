@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 
 const MIN_RATING = 0.5;
 const MAX_RATING = 10;
@@ -54,8 +54,9 @@ function StarRating({
   disabled = false,
 }) {
   const [hoverRating, setHoverRating] = useState(null);
+  const isDraggingRef = useRef(false);
   const selectedRating = normalizeRating(value);
-  const previewRating = hoverRating ?? selectedRating;
+  const displayRating = hoverRating ?? selectedRating;
 
   const getRatingFromPointer = (event) => {
     const rect = event.currentTarget.getBoundingClientRect();
@@ -66,16 +67,54 @@ function StarRating({
     return clampRating(steppedRating);
   };
 
-  const updateRatingFromPointer = (event) => {
+  const previewRatingFromPointer = (event) => {
     if (disabled) return;
 
     setHoverRating(getRatingFromPointer(event));
   };
 
-  const handleClick = (event) => {
+  const selectRatingFromPointer = (event) => {
     if (disabled) return;
 
-    onChange(getRatingFromPointer(event));
+    const nextRating = getRatingFromPointer(event);
+
+    setHoverRating(nextRating);
+    onChange(nextRating);
+  };
+
+  const handlePointerDown = (event) => {
+    if (disabled) return;
+
+    isDraggingRef.current = true;
+    event.currentTarget.setPointerCapture?.(event.pointerId);
+    event.currentTarget.focus();
+    selectRatingFromPointer(event);
+  };
+
+  const handlePointerMove = (event) => {
+    if (disabled) return;
+
+    if (isDraggingRef.current) {
+      selectRatingFromPointer(event);
+      return;
+    }
+
+    if (event.pointerType === "mouse") {
+      previewRatingFromPointer(event);
+    }
+  };
+
+  const stopPointerSelection = (event) => {
+    if (!isDraggingRef.current) return;
+
+    isDraggingRef.current = false;
+    event.currentTarget.releasePointerCapture?.(event.pointerId);
+  };
+
+  const clearPreview = () => {
+    if (!isDraggingRef.current) {
+      setHoverRating(null);
+    }
   };
 
   const handleKeyDown = (event) => {
@@ -114,8 +153,8 @@ function StarRating({
     }
   };
 
-  const selectedText = selectedRating
-    ? `${formatRating(selectedRating)} / ${MAX_RATING}`
+  const displayText = displayRating
+    ? `${formatRating(displayRating)} / ${MAX_RATING}`
     : "No rating";
 
   return (
@@ -135,14 +174,16 @@ function StarRating({
             : "No rating"
         }
         aria-disabled={disabled}
-        onMouseMove={updateRatingFromPointer}
-        onMouseLeave={() => setHoverRating(null)}
-        onClick={handleClick}
+        onPointerDown={handlePointerDown}
+        onPointerMove={handlePointerMove}
+        onPointerUp={stopPointerSelection}
+        onPointerCancel={stopPointerSelection}
+        onPointerLeave={clearPreview}
         onKeyDown={handleKeyDown}
       >
         {Array.from({ length: STAR_COUNT }, (_, index) => {
           const starIndex = index + 1;
-          const fill = getStarFill(starIndex, previewRating);
+          const fill = getStarFill(starIndex, displayRating);
 
           return (
             <span className="star-rating-star-shell" key={starIndex}>
@@ -159,7 +200,7 @@ function StarRating({
       </div>
 
       <div className="star-rating-meta">
-        <span className="star-rating-value">{selectedText}</span>
+        <span className="star-rating-value">{displayText}</span>
 
         {selectedRating && onClear && !disabled && (
           <button
