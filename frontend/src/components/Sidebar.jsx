@@ -1,7 +1,8 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import logo from "../assets/GT_logo.png";
 import { NavLink } from "react-router-dom";
 import {
+  FaBars,
   FaHome,
   FaHeart,
   FaBook,
@@ -17,27 +18,56 @@ function Sidebar({ user, logout, stats, theme, setTheme }) {
     setMobileMenuOpen(false);
   };
 
+  useEffect(() => {
+    document.body.style.overflow = mobileMenuOpen ? "hidden" : "";
+
+    const handleEscape = (event) => {
+      if (event.key === "Escape") {
+        setMobileMenuOpen(false);
+      }
+    };
+
+    document.addEventListener("keydown", handleEscape);
+
+    return () => {
+      document.body.style.overflow = "";
+      document.removeEventListener("keydown", handleEscape);
+    };
+  }, [mobileMenuOpen]);
+
+  const handleLogout = () => {
+    closeMobileMenu();
+    logout();
+  };
+
   return (
     <>
       <div className="mobile-topbar">
+        <button
+          className="mobile-menu-button"
+          type="button"
+          onClick={() => setMobileMenuOpen(true)}
+          aria-label="Open navigation menu"
+          aria-controls="app-sidebar"
+          aria-expanded={mobileMenuOpen}
+        >
+          <FaBars aria-hidden="true" />
+        </button>
+
         <div className="mobile-logo">
           <div className="logo-mark"><img src={logo} alt="GameTracker" /></div>
           <span>GameTracker</span>
         </div>
-
-        <button
-          className="mobile-menu-button"
-          onClick={() => setMobileMenuOpen(true)}
-        >
-          Menu
-        </button>
       </div>
 
       {mobileMenuOpen && (
         <div className="mobile-menu-overlay" onClick={closeMobileMenu} />
       )}
 
-      <aside className={`sidebar ${mobileMenuOpen ? "mobile-open" : ""}`}>
+      <aside
+        className={`sidebar ${mobileMenuOpen ? "mobile-open" : ""}`}
+        id="app-sidebar"
+      >
         <div className="sidebar-top">
           <div className="sidebar-logo">
             <div className="logo-mark"><img src={logo} alt="GameTracker" /></div>
@@ -140,7 +170,7 @@ function Sidebar({ user, logout, stats, theme, setTheme }) {
               </div>
             )}
 
-            <button className="logout-button" onClick={logout}>
+            <button className="logout-button" onClick={handleLogout}>
               Logout
             </button>
           </div>
