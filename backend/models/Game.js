@@ -43,7 +43,7 @@ const gameSchema = new mongoose.Schema(
     },
     userRating: {
       type: Number,
-      min: 1,
+      min: 0.5,
       max: 10,
       default: null,
     },

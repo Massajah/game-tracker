@@ -147,7 +147,8 @@
   margin-bottom: 16px;
 }
 
-.review-field label {
+.review-field label,
+.review-field-label {
   font-weight: 600;
   color: #374151;
 }

@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { getOptimizedImage } from "../utils/images";
+import StarRating from "./StarRating";
 import StatusBadge, { statusConfig } from "./StatusBadge";
 
 function GameDetailsModal({
@@ -275,21 +276,15 @@ function GameDetailsModal({
 
               {isCompleted ? (
                 <div className="review-field">
-                  <label htmlFor="rating">Rating (1-10)</label>
-                  <select
-                    id="rating"
+                  <span className="review-field-label" id="review-rating-label">
+                    Rating
+                  </span>
+                  <StarRating
                     value={rating}
-                    onChange={(e) =>
-                      setRating(e.target.value === "" ? "" : Number(e.target.value))
-                    }
-                  >
-                    <option value="">No rating</option>
-                    {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((num) => (
-                      <option key={num} value={num}>
-                        {num}
-                      </option>
-                    ))}
-                  </select>
+                    onChange={setRating}
+                    onClear={() => setRating("")}
+                    labelledBy="review-rating-label"
+                  />
                 </div>
               ) : (
                 <p className="review-rating-hint">

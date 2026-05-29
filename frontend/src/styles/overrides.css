@@ -125,7 +125,8 @@ body.dark .game-modal-details strong {
 
 body.dark .game-modal-description strong,
 body.dark .review-section h3,
-body.dark .review-field label {
+body.dark .review-field label,
+body.dark .review-field-label {
   color: #f9fafb;
 }
 

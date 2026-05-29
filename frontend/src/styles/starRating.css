@@ -1,0 +1,120 @@
+.star-rating {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.star-rating-stars {
+  display: grid;
+  grid-template-columns: repeat(10, minmax(0, 1fr));
+  gap: 4px;
+  width: min(100%, 318px);
+  padding: 4px 0;
+  border-radius: 10px;
+  cursor: pointer;
+  touch-action: manipulation;
+}
+
+.star-rating-stars:focus-visible {
+  outline: 2px solid #2563eb;
+  outline-offset: 4px;
+}
+
+.star-rating-stars[aria-disabled="true"] {
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+.star-rating-star-shell {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 0;
+}
+
+.star-rating-star {
+  position: relative;
+  display: block;
+  width: 1em;
+  height: 1em;
+  color: #d1d5db;
+  font-size: 1.85rem;
+  line-height: 1;
+}
+
+.star-rating-star-base,
+.star-rating-star-fill {
+  position: absolute;
+  inset: 0;
+}
+
+.star-rating-star-base::before,
+.star-rating-star-fill::before {
+  content: "\2605";
+  display: block;
+  width: 1em;
+  height: 1em;
+}
+
+.star-rating-star-fill {
+  width: var(--star-fill);
+  overflow: hidden;
+  color: #f59e0b;
+  white-space: nowrap;
+}
+
+.star-rating-meta {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  min-height: 28px;
+}
+
+.star-rating-value {
+  color: #374151;
+  font-size: 0.95rem;
+  font-weight: 700;
+}
+
+.star-rating-clear {
+  border: 1px solid var(--border-color);
+  border-radius: 999px;
+  background: var(--sub-panel-bg);
+  color: var(--text-muted);
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.8rem;
+  font-weight: 700;
+  padding: 5px 10px;
+  transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+}
+
+.star-rating-clear:hover,
+.star-rating-clear:focus-visible {
+  background: #eff6ff;
+  border-color: #93c5fd;
+  color: #1d4ed8;
+}
+
+body.dark .star-rating-star {
+  color: #475569;
+}
+
+body.dark .star-rating-value {
+  color: #f9fafb;
+}
+
+body.dark .star-rating-clear {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: #334155;
+  color: #cbd5e1;
+}
+
+body.dark .star-rating-clear:hover,
+body.dark .star-rating-clear:focus-visible {
+  background: rgba(37, 99, 235, 0.18);
+  border-color: #3b82f6;
+  color: #bfdbfe;
+}
