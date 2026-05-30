@@ -26,6 +26,7 @@ function App() {
   const [selectedGame, setSelectedGame] = useState(null);
   const [gameDetails, setGameDetails] = useState(null);
   const [detailsLoading, setDetailsLoading] = useState(false);
+  const [appMessage, setAppMessage] = useState(null);
   const [user, setUser] = useState(() => {
     const savedUser = localStorage.getItem("user");
     return savedUser ? JSON.parse(savedUser) : null;
@@ -67,21 +68,55 @@ function App() {
     fetchGames();
   }, [fetchGames]);
 
+  useEffect(() => {
+    if (!appMessage) return;
+
+    const timer = setTimeout(() => {
+      setAppMessage(null);
+    }, 3000);
+
+    return () => clearTimeout(timer);
+  }, [appMessage]);
+
   const addGame = async () => {
-    if (!title.trim()) return;
+    const trimmedTitle = title.trim();
 
-    await axios.post(
-      `${process.env.REACT_APP_API_URL}/games`,
-      {
-        title,
-        status,
-      },
-      getAuthConfig()
-    );
+    if (!trimmedTitle) {
+      setAppMessage({
+        type: "error",
+        text: "Please enter a game title.",
+      });
+      return;
+    }
 
-    setTitle("");
-    setStatus("wishlist");
-    fetchGames();
+    try {
+      await axios.post(
+        `${process.env.REACT_APP_API_URL}/games`,
+        {
+          title: trimmedTitle,
+          status,
+        },
+        getAuthConfig()
+      );
+
+      setTitle("");
+      setStatus("wishlist");
+      await fetchGames();
+
+      setAppMessage({
+        type: "success",
+        text: `${trimmedTitle} added to ${status}.`,
+      });
+    } catch (error) {
+      setAppMessage({
+        type: "error",
+        text:
+          error.response?.data?.message ||
+          error.response?.data?.error ||
+          error.message ||
+          "Failed to add game.",
+      });
+    }
   };
 
   const addFromAPI = async (game, selectedStatus) => {
@@ -241,6 +276,8 @@ function App() {
                 addManualGame={addGame}
                 deleteGame={deleteGame}
                 openGameDetails={openGameDetails}
+                appMessage={appMessage}
+                setAppMessage={setAppMessage}
               />
             </div>
           </>
