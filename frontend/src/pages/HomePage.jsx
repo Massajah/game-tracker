@@ -150,10 +150,11 @@ function HomePage({ games, openGameDetails, fetchGames }) {
           3
         );
       });
-    } catch {
+    } catch (error) {
+      console.error("AI recommendation failed", error);
       setAiRecommendation({
         title: "Error",
-        reason: "Failed to load recommendation.",
+        reason: "Failed to load recommendation. Please try again.",
         confidence: null,
       });
     } finally {

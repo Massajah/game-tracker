@@ -33,7 +33,9 @@ function RegisterPage() {
       navigate("/login", {
         state: { message: "Account created successfully. Please log in." },
       });
-    } catch {
+    } catch (error) {
+      console.error("Registration error:", error);
+
       setError("Something went wrong. Please try again.");
     }
   };
@@ -51,15 +53,15 @@ function RegisterPage() {
         <div className="auth-features">
           <div className="auth-feature">
             <FaList className="feature-icon" />
-    <span>Organize wishlist, backlog and completed games</span>
+            <span>Organize wishlist, backlog and completed games</span>
           </div>
           <div className="auth-feature">
             <FaStar className="feature-icon" />
-    <span>Rate and review your completed games</span>
-            </div>
+            <span>Rate and review your completed games</span>
+          </div>
           <div className="auth-feature">
             <FaRobot className="feature-icon" />
-    <span>Get AI-powered game suggestions</span>
+            <span>Get AI-powered game suggestions</span>
           </div>
         </div>
       </div>
@@ -67,15 +69,15 @@ function RegisterPage() {
       <div className="auth-form-side">
         <form className="auth-card" onSubmit={handleSubmit}>
           <img
-  src="/logo192.png"
-  alt="GameTracker logo"
-  className="auth-logo"
-/>
+            src="/logo192.png"
+            alt="GameTracker logo"
+            className="auth-logo"
+          />
           <h1 className="auth-title">Create account</h1>
           <div className="auth-subtitle">
-  <span>Welcome!</span>
-  <span>Create account to start building your library.</span>
-</div>
+            <span>Welcome!</span>
+            <span>Create account to start building your library.</span>
+          </div>
 
           {error && <div className="auth-error">{error}</div>}
 

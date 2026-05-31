@@ -39,8 +39,10 @@ function LoginPage({ setUser, setToken }) {
       setUser(data.user);
 
       navigate("/");
-    } catch {
-      setError("Something went wrong. Please try again.");
+    } catch (error) {
+      setError(
+        error.message || "Something went wrong. Please try again."
+      );
     }
   };
 
@@ -73,7 +75,9 @@ function LoginPage({ setUser, setToken }) {
         setUser(data.user);
 
         navigate("/");
-      } catch {
+      } catch (error) {
+        console.error("Google login error:", error);
+
         setError("Google login failed. Please try again.");
       }
     },
@@ -123,15 +127,15 @@ function LoginPage({ setUser, setToken }) {
         <div className="auth-features">
           <div className="auth-feature">
             <FaList className="feature-icon" />
-    <span>Organize wishlist, backlog and completed games</span>
+            <span>Organize wishlist, backlog and completed games</span>
           </div>
           <div className="auth-feature">
             <FaStar className="feature-icon" />
-    <span>Rate and review your completed games</span>
-            </div>
+            <span>Rate and review your completed games</span>
+          </div>
           <div className="auth-feature">
             <FaRobot className="feature-icon" />
-    <span>Get AI-powered game suggestions</span>
+            <span>Get AI-powered game suggestions</span>
           </div>
         </div>
       </div>
@@ -139,15 +143,15 @@ function LoginPage({ setUser, setToken }) {
       <div className="auth-form-side">
         <form className="auth-card" onSubmit={handleSubmit}>
           <img
-  src="/logo192.png"
-  alt="GameTracker logo"
-  className="auth-logo"
-/>
+            src="/logo192.png"
+            alt="GameTracker logo"
+            className="auth-logo"
+          />
           <h1 className="auth-title">Login</h1>
           <div className="auth-subtitle">
-  <span>Welcome back!</span>
-  <span>Sign in to continue your game journey.</span>
-</div>
+            <span>Welcome back!</span>
+            <span>Sign in to continue your game journey.</span>
+          </div>
 
           {successMessage && (
             <div className="auth-success">{successMessage}</div>

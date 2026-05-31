@@ -3,6 +3,7 @@ import axios from "axios";
 import StatusBadge, { statusConfig } from "./StatusBadge";
 import { getOptimizedImage } from "../utils/images";
 import { FaSearch } from "react-icons/fa";
+import getErrorMessage from "../utils/errors";
 
 const normalize = (text = "") =>
   text.toLowerCase().replace(/[^a-z0-9]/g, "");
@@ -139,7 +140,7 @@ function SearchBar({
     } else if (result?.message) {
       setMessage(result.message);
     } else {
-      setMessage("Something went wrong");
+      setMessage("Failed to add game.");
     }
   };
 
@@ -152,7 +153,9 @@ function SearchBar({
       await deleteGame(gameId);
       setMessage("");
     } catch (error) {
-      setMessage("Failed to remove game");
+      setMessage(
+        getErrorMessage(error, "Failed to remove game.")
+      );
     }
   };
 

@@ -2,7 +2,7 @@ import {
   FaHeart,
   FaBook,
   FaGamepad,
-  FaCheck,
+  FaTrophy
 } from "react-icons/fa";
 
 export const statusConfig = {
@@ -25,7 +25,7 @@ export const statusConfig = {
   },
 
   completed: {
-    icon: <FaCheck />,
+    icon: <FaTrophy />,
     label: "Completed",
     className: "status-completed",
   },

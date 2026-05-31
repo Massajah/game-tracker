@@ -2,6 +2,8 @@ import { useEffect, useRef, useState } from "react";
 import { getOptimizedImage } from "../utils/images";
 import StarRating from "./StarRating";
 import StatusBadge, { statusConfig } from "./StatusBadge";
+import getErrorMessage from "../utils/errors";
+import { FaTimes } from "react-icons/fa";
 
 function GameDetailsModal({
   game,
@@ -50,9 +52,8 @@ function GameDetailsModal({
       return;
     }
 
-    const modalGameKey = `${game.isPreview ? "preview" : "library"}-${
-      game._id || game.rawgId
-    }`;
+    const modalGameKey = `${game.isPreview ? "preview" : "library"}-${game._id || game.rawgId
+      }`;
 
     if (modalGameKeyRef.current !== modalGameKey) {
       modalGameKeyRef.current = modalGameKey;
@@ -85,14 +86,13 @@ function GameDetailsModal({
 
   if (!game) return null;
 
-  const currentModalGameKey = `${game.isPreview ? "preview" : "library"}-${
-    game._id || game.rawgId
-  }`;
+  const currentModalGameKey = `${game.isPreview ? "preview" : "library"}-${game._id || game.rawgId
+    }`;
   const currentPreviewStatus = game.isPreview
     ? game.existingStatus ||
-      (previewAddedStatus?.gameKey === currentModalGameKey
-        ? previewAddedStatus.status
-        : null)
+    (previewAddedStatus?.gameKey === currentModalGameKey
+      ? previewAddedStatus.status
+      : null)
     : null;
 
   const clearModalMessage = () => {
@@ -187,10 +187,10 @@ function GameDetailsModal({
         type: "error",
         text: result?.message || "Failed to add game",
       });
-    } catch {
+    } catch (error) {
       showModalMessage({
         type: "error",
-        text: "Failed to add game",
+        text: getErrorMessage(error, "Failed to add game"),
       });
     } finally {
       addInFlightRef.current = false;
@@ -202,8 +202,12 @@ function GameDetailsModal({
   return (
     <div className="modal-overlay" onClick={onClose}>
       <div className="game-modal" onClick={(e) => e.stopPropagation()}>
-        <button className="modal-close-button" onClick={onClose}>
-          x
+        <button className="modal-close-button"
+          onClick={onClose}
+          aria-label="Close"
+          title="Close"
+        >
+          <FaTimes />
         </button>
 
         {game.image && (

@@ -226,21 +226,32 @@
   gap: 8px;
 }
 
-.theme-options button {
-  flex: 1;
-  padding: 8px 10px;
-  border-radius: 999px;
+.theme-button {
+  width: 40px;
+  height: 40px;
+  min-width: 40px;
+  max-width: 40px;
+  min-height: 40px;
+  max-height: 40px;
+  padding: 0;
+  border-radius: 50%;
   border: 1px solid #374151;
   background: transparent;
   color: #d1d5db;
-  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   cursor: pointer;
+  flex: 0 0 40px;
+  aspect-ratio: 1 / 1;
+  transition: all 0.2s ease;
 }
 
-.theme-options button.active {
+.theme-button.active {
   background: #2563eb;
   color: white;
   border-color: #2563eb;
+  box-shadow: 0 0 10px rgba(59, 130, 246, 0.5);
 }
 
 .sidebar::-webkit-scrollbar {
@@ -280,26 +291,6 @@
   justify-content: center;
 }
 
-.theme-button {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  border: 1px solid var(--border-color);
-  background: transparent;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
 .theme-button:hover {
   transform: scale(1.05);
-}
-
-.theme-button.active {
-  background: #2563eb;
-  color: white;
-  border-color: #2563eb;
-  box-shadow: 0 0 12px rgba(59, 130, 246, 0.5);
 }

@@ -10,6 +10,7 @@ import StatusPage from "./pages/StatusPage";
 import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
 import "./App.css";
+import getErrorMessage from "./utils/errors";
 
 const ProtectedRoute = ({ token, children }) => {
   if (!token) {
@@ -110,11 +111,7 @@ function App() {
     } catch (error) {
       setAppMessage({
         type: "error",
-        text:
-          error.response?.data?.message ||
-          error.response?.data?.error ||
-          error.message ||
-          "Failed to add game.",
+        text: getErrorMessage(error, "Failed to add game."),
       });
     }
   };
@@ -143,13 +140,13 @@ function App() {
       if (error.response?.status === 409) {
         return {
           success: false,
-          message: "Game already exists in your list",
+          message: getErrorMessage(error, "Game is already in your collection."),
         };
       }
 
       return {
         success: false,
-        message: "Failed to add game",
+        message: getErrorMessage(error, "Failed to add game."),
       };
     }
   };
@@ -214,10 +211,10 @@ function App() {
       setSelectedGame(res.data);
 
       return { success: true };
-    } catch {
+    } catch (error) {
       return {
         success: false,
-        message: "Failed to save review",
+        message: getErrorMessage(error, "Failed to save review."),
       };
     }
   };

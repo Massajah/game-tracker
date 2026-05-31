@@ -117,10 +117,9 @@
   }
 
   .theme-toggle {
-    margin: 0;
+    margin-bottom: 20px;
   }
 
-  .theme-options button,
   .logout-button {
     min-height: 44px;
   }

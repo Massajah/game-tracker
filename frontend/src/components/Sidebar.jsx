@@ -7,7 +7,7 @@ import {
   FaHeart,
   FaBook,
   FaGamepad,
-  FaCheck,
+  FaTrophy
 } from "react-icons/fa";
 import { FiSun, FiMoon } from "react-icons/fi";
 
@@ -96,7 +96,7 @@ function Sidebar({ user, logout, stats, theme, setTheme }) {
               <span>Playing</span>
             </NavLink>
             <NavLink to="/completed" onClick={closeMobileMenu}>
-              <FaCheck />
+              <FaTrophy />
               <span>Completed</span>
             </NavLink>
           </nav>
