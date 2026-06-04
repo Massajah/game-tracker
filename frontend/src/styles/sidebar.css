@@ -294,3 +294,26 @@
 .theme-button:hover {
   transform: scale(1.05);
 }
+
+.sidebar-settings-link {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 12px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  color: #d1d5db;
+  font-weight: 700;
+  text-decoration: none;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+.sidebar-settings-link:hover {
+  background: rgba(59, 130, 246, 0.12);
+  color: #ffffff;
+}
+
+.sidebar-settings-link.active {
+  background: #2563eb;
+  color: #ffffff;
+}

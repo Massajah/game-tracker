@@ -137,3 +137,46 @@ exports.googleLogin = async (req, res) => {
     res.status(401).json({ error: "Google login failed" });
   }
 };
+
+exports.updateProfile = async (req, res) => {
+  try {
+    const { username } = req.body;
+
+    if (!username || username.trim().length < 2) {
+      return res.status(400).json({
+        error: "Username must be at least 2 characters",
+      });
+    }
+
+    const trimmedUsername = username.trim();
+
+    const existingUser = await User.findOne({
+      username: trimmedUsername,
+      _id: { $ne: req.user.userId },
+    });
+
+    if (existingUser) {
+      return res.status(409).json({
+        error: "Username is already taken",
+      });
+    }
+
+    const user = await User.findByIdAndUpdate(
+      req.user.userId,
+      { username: trimmedUsername },
+      { returnDocument: "after", runValidators: true }
+    ).select("-password");
+
+    res.json({
+      user: {
+        id: user._id,
+        username: user.username,
+        email: user.email,
+      },
+    });
+  } catch (error) {
+    res.status(500).json({
+      error: "Failed to update profile",
+    });
+  }
+};

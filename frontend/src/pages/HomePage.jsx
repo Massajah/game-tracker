@@ -2,7 +2,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import StatusBadge from "../components/StatusBadge";
 import { getOptimizedImage } from "../utils/images";
 
-function HomePage({ games, openGameDetails, fetchGames }) {
+function HomePage({ games, openGameDetails, fetchGames, selectedPlatforms }) {
   const [aiRecommendation, setAiRecommendation] = useState(null);
   const [recentAIRecommendations, setRecentAIRecommendations] = useState([]);
   const [aiLoading, setAiLoading] = useState(false);
@@ -103,6 +103,7 @@ function HomePage({ games, openGameDetails, fetchGames }) {
           games,
           randomSeed: Date.now(),
           recentAIRecommendations,
+          selectedPlatforms
         }),
       });
 
@@ -147,7 +148,7 @@ function HomePage({ games, openGameDetails, fetchGames }) {
 
         return [newTitle, ...prev.filter((title) => title !== newTitle)].slice(
           0,
-          3
+          10
         );
       });
     } catch (error) {

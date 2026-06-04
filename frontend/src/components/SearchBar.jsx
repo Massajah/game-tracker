@@ -8,7 +8,13 @@ import getErrorMessage from "../utils/errors";
 const normalize = (text = "") =>
   text.toLowerCase().replace(/[^a-z0-9]/g, "");
 
-const sortResults = (results, query) => {
+const sortResults = (results, query, sortMode) => {
+  if (sortMode === "name") {
+    return [...results].sort((a, b) =>
+      a.name.localeCompare(b.name)
+    );
+  }
+
   const normalizedQuery = normalize(query);
 
   return [...results].sort((a, b) => {
@@ -20,6 +26,7 @@ const sortResults = (results, query) => {
       if (name.includes(normalizedQuery)) points += 50000;
 
       const queryWords = normalizedQuery.match(/[a-z0-9]+/g) || [];
+
       queryWords.forEach((word) => {
         if (word.length >= 3 && name.includes(word)) {
           points += 5000;
@@ -36,6 +43,20 @@ const sortResults = (results, query) => {
   });
 };
 
+const platformIdMap = {
+  PC: 4,
+  "PlayStation 5": 187,
+  "PlayStation 4": 18,
+  "Xbox Series X/S": 186,
+  "Xbox One": 1,
+  "Nintendo Switch": 7,
+  iOS: 3,
+  Android: 21,
+  Linux: 6,
+  macOS: 5,
+  "Nintendo 3DS": 8,
+};
+
 function SearchBar({
   addFromAPI,
   games,
@@ -48,6 +69,10 @@ function SearchBar({
   openGameDetails,
   appMessage,
   setAppMessage,
+  resultsPerPage,
+  sortMode,
+  selectedPlatforms,
+  searchOwnedPlatformsOnly,
 }) {
   const [search, setSearch] = useState("");
   const [results, setResults] = useState([]);
@@ -68,11 +93,20 @@ function SearchBar({
 
     try {
       setLoading(true);
+      console.log("selectedPlatforms:", selectedPlatforms);
+      const platformIds = selectedPlatforms
+        .map((platform) => platformIdMap[platform])
+        .filter(Boolean);
+
+      const platformQuery =
+        searchOwnedPlatformsOnly && platformIds.length > 0
+          ? `&platforms=${platformIds.join(",")}`
+          : "";
 
       const searchRawg = async (searchTerm) => {
         const res = await axios.get(
           `https://api.rawg.io/api/games?key=${process.env.REACT_APP_RAWG_API_KEY
-          }&search=${encodeURIComponent(searchTerm)}&page_size=20`
+          }&search=${encodeURIComponent(searchTerm)}&page_size=${resultsPerPage}${platformQuery}`
         );
 
         return res.data.results || [];
@@ -93,13 +127,13 @@ function SearchBar({
         results = uniqueResults;
       }
 
-      setResults(sortResults(results, trimmedQuery));
+      setResults(sortResults(results, trimmedQuery, sortMode));
     } catch {
       setResults([]);
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [sortMode, resultsPerPage, selectedPlatforms, searchOwnedPlatformsOnly]);
 
   useEffect(() => {
     const timeoutId = setTimeout(() => {
@@ -208,7 +242,7 @@ function SearchBar({
 
           {!loading && results.length > 0 && (
             <div className="search-results">
-              {results.slice(0, 15).map((game) => {
+              {results.slice(0, resultsPerPage).map((game) => {
                 const existingGame = getExistingGame(game.id);
                 const alreadyAdded = Boolean(existingGame);
                 const justAdded = justAddedGameId === game.id;

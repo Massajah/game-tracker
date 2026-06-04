@@ -9,6 +9,7 @@ import HomePage from "./pages/HomePage";
 import StatusPage from "./pages/StatusPage";
 import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
+import SettingsPage from "./pages/SettingsPage";
 import "./App.css";
 import getErrorMessage from "./utils/errors";
 
@@ -36,8 +37,27 @@ function App() {
   const [theme, setTheme] = useState(() => {
     return localStorage.getItem("theme") || "light";
   });
+  const [resultsPerPage, setResultsPerPage] = useState(() => {
+    return Number(localStorage.getItem("resultsPerPage")) || 20;
+  });
+
+  const [sortMode, setSortMode] = useState(() => {
+    return localStorage.getItem("sortMode") || "popularity";
+  });
+
+  const [selectedPlatforms, setSelectedPlatforms] = useState(() => {
+    const saved = localStorage.getItem("selectedPlatforms");
+    return saved ? JSON.parse(saved) : [];
+  });
+
+  const [searchOwnedPlatformsOnly, setSearchOwnedPlatformsOnly] = useState(() => {
+    return localStorage.getItem("searchOwnedPlatformsOnly") === "true";
+  });
 
   const location = useLocation();
+
+  const hideSearch = location.pathname === "/settings";
+
   const isAuthPage =
     location.pathname === "/login" || location.pathname === "/register";
 
@@ -78,6 +98,28 @@ function App() {
 
     return () => clearTimeout(timer);
   }, [appMessage]);
+
+  useEffect(() => {
+    localStorage.setItem("resultsPerPage", resultsPerPage);
+  }, [resultsPerPage]);
+
+  useEffect(() => {
+    localStorage.setItem("sortMode", sortMode);
+  }, [sortMode]);
+
+  useEffect(() => {
+    localStorage.setItem(
+      "selectedPlatforms",
+      JSON.stringify(selectedPlatforms)
+    );
+  }, [selectedPlatforms]);
+
+  useEffect(() => {
+    localStorage.setItem(
+      "searchOwnedPlatformsOnly",
+      searchOwnedPlatformsOnly
+    );
+  }, [searchOwnedPlatformsOnly]);
 
   const addGame = async () => {
     const trimmedTitle = title.trim();
@@ -260,9 +302,9 @@ function App() {
       <main className={isAuthPage ? "auth-main" : "main-content"}>
         {!isAuthPage && (
           <>
-            <Header />
+            {!hideSearch && <Header />}
 
-            <div className="top-bar">
+            {!hideSearch && <div className="top-bar">
               <SearchBar
                 addFromAPI={addFromAPI}
                 games={games}
@@ -275,8 +317,14 @@ function App() {
                 openGameDetails={openGameDetails}
                 appMessage={appMessage}
                 setAppMessage={setAppMessage}
+                resultsPerPage={resultsPerPage}
+                sortMode={sortMode}
+                selectedPlatforms={selectedPlatforms}
+                searchOwnedPlatformsOnly={searchOwnedPlatformsOnly}
               />
+
             </div>
+            }
           </>
         )}
 
@@ -296,6 +344,7 @@ function App() {
                   games={games}
                   openGameDetails={openGameDetails}
                   fetchGames={fetchGames}
+                  selectedPlatforms={selectedPlatforms}
                 />
               </ProtectedRoute>
             }
@@ -364,6 +413,28 @@ function App() {
               </ProtectedRoute>
             }
           />
+
+          <Route
+            path="/settings"
+            element={
+              <ProtectedRoute token={token}>
+                <SettingsPage
+                  theme={theme}
+                  setTheme={setTheme}
+                  resultsPerPage={resultsPerPage}
+                  setResultsPerPage={setResultsPerPage}
+                  sortMode={sortMode}
+                  setSortMode={setSortMode}
+                  selectedPlatforms={selectedPlatforms}
+                  setSelectedPlatforms={setSelectedPlatforms}
+                  searchOwnedPlatformsOnly={searchOwnedPlatformsOnly}
+                  setSearchOwnedPlatformsOnly={setSearchOwnedPlatformsOnly}
+                  user={user}
+                  setUser={setUser}
+                />
+              </ProtectedRoute>
+            }
+          />
         </Routes>
       </main>
 
@@ -374,6 +445,7 @@ function App() {
         onClose={closeGameDetails}
         saveGameReview={saveGameReview}
         addFromAPI={addFromAPI}
+        selectedPlatforms={selectedPlatforms}
       />
     </div>
   );

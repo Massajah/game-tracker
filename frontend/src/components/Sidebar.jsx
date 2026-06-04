@@ -7,9 +7,9 @@ import {
   FaHeart,
   FaBook,
   FaGamepad,
-  FaTrophy
+  FaTrophy,
+  FaCog,
 } from "react-icons/fa";
-import { FiSun, FiMoon } from "react-icons/fi";
 
 function Sidebar({ user, logout, stats, theme, setTheme }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -141,26 +141,16 @@ function Sidebar({ user, logout, stats, theme, setTheme }) {
         </div>
 
         <div className="sidebar-bottom">
-          <div className="theme-toggle">
 
-            <div className="theme-options">
-              <button
-                className={`theme-button ${theme === "light" ? "active" : ""}`}
-                onClick={() => setTheme("light")}
-                title="Light mode"
-              >
-                <FiSun />
-              </button>
-
-              <button
-                className={`theme-button ${theme === "dark" ? "active" : ""}`}
-                onClick={() => setTheme("dark")}
-                title="Dark mode"
-              >
-                <FiMoon />
-              </button>
-            </div>
-          </div>
+          <NavLink
+            to="/settings"
+            className={({ isActive }) =>
+              `sidebar-settings-link ${isActive ? "active" : ""}`
+            }
+          >
+            <FaCog />
+            <span>Settings</span>
+          </NavLink>
 
           <div className="sidebar-footer">
             {user && (

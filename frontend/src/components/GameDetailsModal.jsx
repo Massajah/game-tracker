@@ -3,7 +3,7 @@ import { getOptimizedImage } from "../utils/images";
 import StarRating from "./StarRating";
 import StatusBadge, { statusConfig } from "./StatusBadge";
 import getErrorMessage from "../utils/errors";
-import { FaTimes } from "react-icons/fa";
+import { FaTimes, FaCheck } from "react-icons/fa";
 
 function GameDetailsModal({
   game,
@@ -12,6 +12,7 @@ function GameDetailsModal({
   onClose,
   saveGameReview,
   addFromAPI,
+  selectedPlatforms,
 }) {
   const [rating, setRating] = useState("");
   const [notes, setNotes] = useState("");
@@ -25,6 +26,10 @@ function GameDetailsModal({
   const messageTimerRef = useRef(null);
 
   const isCompleted = game?.status === "completed";
+
+  const isOwnedPlatform = (platformName) => {
+    return selectedPlatforms.includes(platformName);
+  };
 
   useEffect(() => {
     const handleEscape = (event) => {
@@ -255,12 +260,25 @@ function GameDetailsModal({
               )}
 
               {details.platforms?.length > 0 && (
-                <p>
-                  <strong>Platforms:</strong>{" "}
-                  {details.platforms
-                    .map((platform) => platform.platform.name)
-                    .join(", ")}
-                </p>
+                <div className="modal-platforms-row">
+                  <strong>Platforms:</strong>
+
+                  <div className="modal-platform-list">
+                    {details.platforms.map(({ platform }) => {
+                      const owned = isOwnedPlatform(platform.name);
+
+                      return (
+                        <span
+                          key={platform.id}
+                          className={`modal-platform-badge ${owned ? "owned" : ""}`}
+                        >
+                          {owned && <FaCheck className="modal-platform-check" />}
+                          {platform.name}
+                        </span>
+                      );
+                    })}
+                  </div>
+                </div>
               )}
 
               {details.description_raw && (
