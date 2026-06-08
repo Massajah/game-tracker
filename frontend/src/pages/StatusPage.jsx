@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import GameSection from "../components/GameSection";
 
 const SORT_OPTIONS = [
@@ -10,6 +10,8 @@ const SORT_OPTIONS = [
   { value: "metacriticHigh", label: "Metacritic: High to low" },
   { value: "metacriticLow", label: "Metacritic: Low to high" },
 ];
+
+const DEFAULT_SORT = "recentlyAdded";
 
 const COMPLETED_SORT_OPTIONS = [
   ...SORT_OPTIONS,
@@ -152,15 +154,21 @@ function StatusPage({
   deleteGame,
   openGameDetails,
 }) {
-  const [sortBy, setSortBy] = useState("recentlyAdded");
+  const [sortBy, setSortBy] = useState(DEFAULT_SORT);
   const [selectedGenre, setSelectedGenre] = useState("All");
   const [selectedPlatform, setSelectedPlatform] = useState("All");
+  const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
 
-  useEffect(() => {
-    setSortBy("recentlyAdded");
+  const resetFilters = useCallback(() => {
+    setSortBy(DEFAULT_SORT);
     setSelectedGenre("All");
     setSelectedPlatform("All");
-  }, [status]);
+  }, []);
+
+  useEffect(() => {
+    resetFilters();
+    setMobileFiltersOpen(false);
+  }, [resetFilters, status]);
 
   const statusGames = useMemo(
     () => games.filter((game) => game.status === status),
@@ -194,51 +202,80 @@ function StatusPage({
   const sortOptions =
     status === "completed" ? COMPLETED_SORT_OPTIONS : SORT_OPTIONS;
 
+  const filterPanelId = `${status}-filters-panel`;
+
+  const filterToggleButton = (
+    <button
+      type="button"
+      className="mobile-filter-toggle"
+      onClick={() => setMobileFiltersOpen((open) => !open)}
+      aria-expanded={mobileFiltersOpen}
+      aria-controls={filterPanelId}
+    >
+      Filters {mobileFiltersOpen ? "▲" : "▼"}
+    </button>
+  );
+
   const controls = (
-    <div className="library-controls" aria-label={`${title} filters`}>
-      <label className="library-control">
-        <span>Sort by</span>
-        <select
-          value={sortBy}
-          onChange={(event) => setSortBy(event.target.value)}
-        >
-          {sortOptions.map((option) => (
-            <option key={option.value} value={option.value}>
-              {option.label}
-            </option>
-          ))}
-        </select>
-      </label>
+    <div className="status-filters">
+      <div
+        id={filterPanelId}
+        className={`status-filter-panel ${mobileFiltersOpen ? "is-open" : ""}`}
+      >
+        <div className="library-controls" aria-label={`${title} filters`}>
+          <label className="library-control">
+            <span>Sort by</span>
+            <select
+              value={sortBy}
+              onChange={(event) => setSortBy(event.target.value)}
+            >
+              {sortOptions.map((option) => (
+                <option key={option.value} value={option.value}>
+                  {option.label}
+                </option>
+              ))}
+            </select>
+          </label>
 
-      <label className="library-control">
-        <span>Genre</span>
-        <select
-          value={selectedGenre}
-          onChange={(event) => setSelectedGenre(event.target.value)}
-        >
-          <option value="All">All</option>
-          {genreOptions.map((option) => (
-            <option key={option.value} value={option.value}>
-              {option.label}
-            </option>
-          ))}
-        </select>
-      </label>
+          <label className="library-control">
+            <span>Genre</span>
+            <select
+              value={selectedGenre}
+              onChange={(event) => setSelectedGenre(event.target.value)}
+            >
+              <option value="All">All</option>
+              {genreOptions.map((option) => (
+                <option key={option.value} value={option.value}>
+                  {option.label}
+                </option>
+              ))}
+            </select>
+          </label>
 
-      <label className="library-control">
-        <span>Platform</span>
-        <select
-          value={selectedPlatform}
-          onChange={(event) => setSelectedPlatform(event.target.value)}
-        >
-          <option value="All">All</option>
-          {platformOptions.map((option) => (
-            <option key={option.value} value={option.value}>
-              {option.label}
-            </option>
-          ))}
-        </select>
-      </label>
+          <label className="library-control">
+            <span>Platform</span>
+            <select
+              value={selectedPlatform}
+              onChange={(event) => setSelectedPlatform(event.target.value)}
+            >
+              <option value="All">All</option>
+              {platformOptions.map((option) => (
+                <option key={option.value} value={option.value}>
+                  {option.label}
+                </option>
+              ))}
+            </select>
+          </label>
+
+          <button
+            type="button"
+            className="secondary-button status-reset-filters"
+            onClick={resetFilters}
+          >
+            Reset filters
+          </button>
+        </div>
+      </div>
     </div>
   );
 
@@ -252,6 +289,7 @@ function StatusPage({
       deleteGame={deleteGame}
       onGameClick={openGameDetails}
       controls={controls}
+      filterToggleButton={filterToggleButton}
       emptyText={
         statusGames.length === 0
           ? "No games yet"

@@ -144,6 +144,7 @@ function Sidebar({ user, logout, stats, theme, setTheme }) {
 
           <NavLink
             to="/settings"
+            onClick={closeMobileMenu}
             className={({ isActive }) =>
               `sidebar-settings-link ${isActive ? "active" : ""}`
             }

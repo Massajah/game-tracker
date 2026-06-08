@@ -10,17 +10,20 @@ function GameSection({
   deleteGame,
   onGameClick,
   controls,
+  filterToggleButton,
   emptyText = "No games yet",
 }) {
   return (
     <section className="game-section" id={id}>
-      {status ? (
-  <div className="page-title-status">
-    <StatusBadge status={status} />
-  </div>
-) : (
-  <h2>{title}</h2>
-)}
+      <div className="page-title-status">
+        {status ? (
+          <StatusBadge status={status} />
+        ) : (
+          <h2>{title}</h2>
+        )}
+        {filterToggleButton}
+      </div>
+
       {controls}
 
       {games.length === 0 ? (

@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import axios from "axios";
 import { Navigate, Route, Routes, useLocation } from "react-router-dom";
+import { FaSearch, FaTimes } from "react-icons/fa";
 import SearchBar from "./components/SearchBar";
 import GameDetailsModal from "./components/GameDetailsModal";
 import Sidebar from "./components/Sidebar";
@@ -53,6 +54,7 @@ function App() {
   const [searchOwnedPlatformsOnly, setSearchOwnedPlatformsOnly] = useState(() => {
     return localStorage.getItem("searchOwnedPlatformsOnly") === "true";
   });
+  const [mobileSearchOpen, setMobileSearchOpen] = useState(false);
 
   const location = useLocation();
 
@@ -88,6 +90,10 @@ function App() {
   useEffect(() => {
     fetchGames();
   }, [fetchGames]);
+
+  useEffect(() => {
+    setMobileSearchOpen(false);
+  }, [location.pathname]);
 
   useEffect(() => {
     if (!appMessage) return;
@@ -304,27 +310,46 @@ function App() {
           <>
             {!hideSearch && <Header />}
 
-            {!hideSearch && <div className="top-bar">
-              <SearchBar
-                addFromAPI={addFromAPI}
-                games={games}
-                manualTitle={title}
-                setManualTitle={setTitle}
-                manualStatus={status}
-                setManualStatus={setStatus}
-                addManualGame={addGame}
-                deleteGame={deleteGame}
-                openGameDetails={openGameDetails}
-                appMessage={appMessage}
-                setAppMessage={setAppMessage}
-                resultsPerPage={resultsPerPage}
-                sortMode={sortMode}
-                selectedPlatforms={selectedPlatforms}
-                searchOwnedPlatformsOnly={searchOwnedPlatformsOnly}
-              />
+            {!hideSearch && (
+              <div className={`top-bar ${mobileSearchOpen ? "mobile-search-open" : ""}`}>
+                <button
+                  type="button"
+                  className="mobile-search-toggle"
+                  onClick={() => setMobileSearchOpen((open) => !open)}
+                  aria-expanded={mobileSearchOpen}
+                  aria-controls="global-search-panel"
+                >
+                  {mobileSearchOpen ? (
+                    <FaTimes aria-hidden="true" />
+                  ) : (
+                    <FaSearch aria-hidden="true" />
+                  )}
+                  <span>
+                    {mobileSearchOpen ? "Close search" : "Search / Add games"}
+                  </span>
+                </button>
 
-            </div>
-            }
+                <div id="global-search-panel" className="search-collapse-panel">
+                  <SearchBar
+                    addFromAPI={addFromAPI}
+                    games={games}
+                    manualTitle={title}
+                    setManualTitle={setTitle}
+                    manualStatus={status}
+                    setManualStatus={setStatus}
+                    addManualGame={addGame}
+                    deleteGame={deleteGame}
+                    openGameDetails={openGameDetails}
+                    appMessage={appMessage}
+                    setAppMessage={setAppMessage}
+                    resultsPerPage={resultsPerPage}
+                    sortMode={sortMode}
+                    selectedPlatforms={selectedPlatforms}
+                    searchOwnedPlatformsOnly={searchOwnedPlatformsOnly}
+                  />
+                </div>
+              </div>
+            )}
           </>
         )}
 

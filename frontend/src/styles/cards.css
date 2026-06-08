@@ -75,6 +75,21 @@
   flex-wrap: wrap;
 }
 
+.status-filter-panel {
+  display: contents;
+}
+
+.mobile-filter-toggle {
+  display: none;
+}
+
+.status-reset-filters {
+  align-self: flex-end;
+  min-height: 36px;
+  margin-top: 0;
+  white-space: nowrap;
+}
+
 .library-control {
   display: flex;
   flex-direction: column;

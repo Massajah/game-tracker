@@ -8,6 +8,16 @@
 
 .search-area {
   width: 100%;
+  min-width: 0;
+}
+
+.search-collapse-panel {
+  width: 100%;
+  min-width: 0;
+}
+
+.mobile-search-toggle {
+  display: none;
 }
 
 .search-bar-row {
@@ -15,6 +25,7 @@
   gap: 12px;
   align-items: flex-start;
   flex-wrap: wrap;
+  min-width: 0;
 }
 
 .search-bar-wrapper {
@@ -22,6 +33,7 @@
   width: 100%;
   max-width: 600px;
   margin-bottom: 20px;
+  min-width: 0;
 }
 
 .search-input {
@@ -59,12 +71,14 @@
   border-radius: 14px;
   box-shadow: 0 12px 30px rgba(0, 0, 0, 0.14);
   overflow-y: auto;
+  overflow-x: hidden;
   max-height: 420px;
   z-index: 1000;
 }
 
 .search-result-item {
   width: 100%;
+  min-width: 0;
   display: flex;
   align-items: center;
   gap: 12px;
@@ -75,6 +89,7 @@
   background: white;
   text-align: left;
   cursor: pointer;
+  box-sizing: border-box;
 }
 
 .search-result-item:last-child {
@@ -101,6 +116,7 @@
 }
 
 .search-result-info {
+  flex: 1;
   display: flex;
   flex-direction: column;
   gap: 4px;
@@ -110,6 +126,7 @@
 .search-result-title {
   font-weight: 600;
   color: #111827;
+  overflow-wrap: anywhere;
 }
 
 .search-result-meta {
@@ -140,6 +157,8 @@
   display: flex;
   gap: 12px;
   flex-wrap: wrap;
+  width: 100%;
+  min-width: 0;
 }
 
 .add-game-bar {
@@ -499,6 +518,8 @@ body.dark .search-result-add-toggle:hover {
   align-items: center;
   gap: 12px;
   cursor: pointer;
+  min-width: 0;
+  max-width: 100%;
 }
 
 .search-result-main:hover h4 {
@@ -614,6 +635,7 @@ body.dark .search-result-add-toggle:hover {
   position: relative;
   width: 100%;
   max-width: 700px;
+  min-width: 0;
 }
 
 .search-icon {
