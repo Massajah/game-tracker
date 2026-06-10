@@ -19,6 +19,7 @@ const COMPLETED_SORT_OPTIONS = [
   { value: "ratingLow", label: "Your rating: Low to high" },
 ];
 
+// Filters accept both stored string values and richer RAWG-shaped objects.
 const getListValues = (game, key) => {
   if (!Array.isArray(game?.[key])) return [];
 
@@ -53,6 +54,7 @@ const parseNumber = (value) => {
 };
 
 const compareNullable = (a, b, direction, compareValues) => {
+  // Missing values always sort last, regardless of ascending or descending mode.
   const aMissing = a === null || a === undefined || a === "";
   const bMissing = b === null || b === undefined || b === "";
 

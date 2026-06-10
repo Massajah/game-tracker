@@ -861,9 +861,35 @@
     margin-top: 14px;
   }
 
+  .search-collapse-panel,
+  .search-area,
+  .search-bar-row,
+  .search-bar-wrapper {
+    height: auto;
+    min-height: 0;
+  }
+
   .search-heading {
     font-size: 0.95rem;
     line-height: 1.25;
+  }
+
+  .search-primary-row {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+  }
+
+  .search-input-wrapper,
+  .search-results,
+  .search-empty-message,
+  .search-message {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .search-input-wrapper {
+    flex: 0 0 auto;
   }
 
   .search-results {
@@ -907,8 +933,9 @@
   }
 
   .manual-toggle-button {
-    width: 100%;
-    min-height: 44px;
+    width: fit-content;
+    min-height: 36px;
+    justify-content: flex-start;
     text-align: left;
   }
 
@@ -1180,5 +1207,15 @@
 @media (min-width: 769px) {
   .status-filter-panel {
     display: block;
+  }
+}
+
+@media (max-width: 768px) {
+  .game-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .game-card {
+    max-width: 190px;
   }
 }

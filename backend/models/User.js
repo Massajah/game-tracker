@@ -20,6 +20,7 @@ const userSchema = new mongoose.Schema(
       type: String,
       minlength: 6,
     },
+    // Sparse uniqueness allows local-only users while preventing duplicate Google links.
     googleId: {
       type: String,
       unique: true,

@@ -17,6 +17,7 @@ const gameSchema = new mongoose.Schema(
       enum: ["wishlist", "backlog", "playing", "completed"],
       default: "wishlist",
     },
+    // Null identifies manually added games that do not have a RAWG match.
     rawgId: {
       type: Number,
       default: null,
@@ -55,6 +56,14 @@ const gameSchema = new mongoose.Schema(
     },
   },
   { timestamps: true }
+);
+
+gameSchema.index(
+  { userId: 1, rawgId: 1 },
+  {
+    unique: true,
+    partialFilterExpression: { rawgId: { $type: "number" } },
+  }
 );
 
 module.exports = mongoose.model("Game", gameSchema);

@@ -14,6 +14,7 @@ import SettingsPage from "./pages/SettingsPage";
 import "./App.css";
 import getErrorMessage from "./utils/errors";
 
+// Frontend route guard for UX; the backend still enforces authorization on data routes.
 const ProtectedRoute = ({ token, children }) => {
   if (!token) {
     return <Navigate to="/login" replace />;
@@ -63,6 +64,7 @@ function App() {
   const isAuthPage =
     location.pathname === "/login" || location.pathname === "/register";
 
+  // Memoize auth headers so API helpers update as soon as the active token changes.
   const getAuthConfig = useCallback(
     () => ({
       headers: {
@@ -74,6 +76,7 @@ function App() {
 
   const fetchGames = useCallback(async () => {
     if (!token) {
+      // Avoid showing a previous user's library after logout or token removal.
       setGames([]);
       return;
     }
@@ -83,6 +86,7 @@ function App() {
   }, [getAuthConfig, token]);
 
   useEffect(() => {
+    // Theme CSS is keyed from the body class for shared layout and component styles.
     document.body.className = theme;
     localStorage.setItem("theme", theme);
   }, [theme]);
@@ -166,6 +170,7 @@ function App() {
 
   const addFromAPI = async (game, selectedStatus) => {
     try {
+      // Persist only the RAWG fields used by library cards, filters, and detail previews.
       await axios.post(
         `${process.env.REACT_APP_API_URL}/games`,
         {
@@ -219,6 +224,7 @@ function App() {
     setSelectedGame(game);
     setGameDetails(null);
 
+    // Manual entries have no RAWG id, so the modal falls back to locally stored fields.
     if (!game.rawgId) return;
 
     try {
@@ -254,6 +260,7 @@ function App() {
       );
 
       setGames((prevGames) =>
+        // Patch the saved game locally so the open modal and grid stay in sync.
         prevGames.map((game) => (game._id === id ? res.data : game))
       );
       setSelectedGame(res.data);
@@ -369,6 +376,7 @@ function App() {
                   games={games}
                   openGameDetails={openGameDetails}
                   fetchGames={fetchGames}
+                  token={token}
                   selectedPlatforms={selectedPlatforms}
                 />
               </ProtectedRoute>

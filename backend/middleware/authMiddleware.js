@@ -11,6 +11,7 @@ const authMiddleware = (req, res, next) => {
 
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    // Controllers use this id to scope every user-owned database query.
     req.user = { userId: decoded.userId };
     next();
   } catch (error) {

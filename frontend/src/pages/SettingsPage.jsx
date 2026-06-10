@@ -82,6 +82,7 @@ function SettingsPage({
         : mainPlatforms;
 
     const togglePlatform = (platform) => {
+        // Use a functional update so rapid checkbox changes do not read stale state.
         setSelectedPlatforms((prev) =>
             prev.includes(platform)
                 ? prev.filter((p) => p !== platform)
@@ -119,6 +120,7 @@ function SettingsPage({
             }
 
             localStorage.setItem("user", JSON.stringify(data.user));
+            // Keep the sidebar state and refresh-persisted profile in sync.
             setUser(data.user);
 
             setProfileMessage({

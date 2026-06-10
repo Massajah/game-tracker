@@ -17,6 +17,7 @@ const sortResults = (results, query, sortMode) => {
 
   const normalizedQuery = normalize(query);
 
+  // Popularity sort first rewards textual relevance, then RAWG activity and critic score.
   return [...results].sort((a, b) => {
     const score = (game) => {
       const name = normalize(game.name);
@@ -94,6 +95,7 @@ function SearchBar({
     try {
       setLoading(true);
       console.log("selectedPlatforms:", selectedPlatforms);
+      // RAWG filters by numeric platform ids; unsupported labels are safely ignored.
       const platformIds = selectedPlatforms
         .map((platform) => platformIdMap[platform])
         .filter(Boolean);
@@ -115,6 +117,7 @@ function SearchBar({
       let results = await searchRawg(trimmedQuery);
 
       if (trimmedQuery.includes(" ")) {
+        // Multi-word searches can be sparse, so merge a broad first-word fallback.
         const firstWord = trimmedQuery.split(" ")[0];
         const fallbackResults = await searchRawg(firstWord);
 
@@ -196,6 +199,7 @@ function SearchBar({
   const createPreviewGame = (game) => {
     const existingGame = getExistingGame(game.id);
 
+    // Shape RAWG results like saved games so the shared details modal can preview them.
     return {
       title: game.name,
       image: game.background_image || null,
@@ -216,23 +220,35 @@ function SearchBar({
       <div className="search-bar-row">
         <div className="search-bar-wrapper">
           <h3 className="search-heading">Add games to your library</h3>
-          <div className="search-input-wrapper">
-            <FaSearch className="search-icon" />
+          <div className="search-primary-row">
+            <div className="search-input-wrapper">
+              <FaSearch className="search-icon" />
 
-            <input
-              type="text"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              onKeyDown={(e) => {
-                if (e.key === "Enter") {
-                  e.preventDefault();
-                  fetchSearchResults(search);
-                }
-              }}
-              placeholder="Search games..."
-              className="search-input"
-            />
+              <input
+                type="text"
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    e.preventDefault();
+                    fetchSearchResults(search);
+                  }
+                }}
+                placeholder="Search games..."
+                className="search-input"
+              />
+            </div>
           </div>
+
+          <button
+            type="button"
+            className="manual-toggle-button"
+            onClick={() => setShowManualAdd(!showManualAdd)}
+          >
+            {showManualAdd
+              ? "Hide manual add ▲"
+              : "Can't find your game? Add manually ▼"}
+          </button>
 
           {loading && (
             <div className="search-results">
@@ -363,16 +379,6 @@ function SearchBar({
       </div>
 
       {message && <p className="search-message">{message}</p>}
-
-      <button
-        type="button"
-        className="manual-toggle-button"
-        onClick={() => setShowManualAdd(!showManualAdd)}
-      >
-        {showManualAdd
-          ? "Hide manual add ▲"
-          : "Can't find your game? Add manually ▼"}
-      </button>
 
       {
         showManualAdd && (

@@ -9,6 +9,7 @@ const authMiddleware = require("../middleware/authMiddleware");
 
 const router = express.Router();
 
+// Every game endpoint is protected and scoped to the authenticated user.
 router.use(authMiddleware);
 
 router.get("/", getGames);

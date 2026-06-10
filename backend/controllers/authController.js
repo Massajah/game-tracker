@@ -6,6 +6,7 @@ const { OAuth2Client } = require("google-auth-library");
 const googleClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
 const createToken = (userId) => {
+  // Keep the JWT payload minimal; the client stores display profile data separately.
   return jwt.sign({ userId }, process.env.JWT_SECRET, {
     expiresIn: "7d",
   });
@@ -106,6 +107,7 @@ exports.googleLogin = async (req, res) => {
       return res.status(400).json({ error: "Google account email not found" });
     }
 
+    // Link existing email/password accounts to Google instead of creating duplicates.
     let user = await User.findOne({
       $or: [{ googleId: sub }, { email }],
     });
@@ -150,6 +152,7 @@ exports.updateProfile = async (req, res) => {
 
     const trimmedUsername = username.trim();
 
+    // Exclude the current account so saving an unchanged username is allowed.
     const existingUser = await User.findOne({
       username: trimmedUsername,
       _id: { $ne: req.user.userId },

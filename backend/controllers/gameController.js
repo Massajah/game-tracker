@@ -32,6 +32,7 @@ exports.createGame = async (req, res) => {
 
     let existingGame = null;
 
+    // RAWG-backed games dedupe by external id; manual entries fall back to title per user.
     if (rawgId) {
       existingGame = await Game.findOne({ rawgId, userId });
     } else {
@@ -83,6 +84,7 @@ exports.updateGame = async (req, res) => {
       updateData.notes = notes;
     }
 
+    // Include userId in the selector so a valid game id cannot cross account boundaries.
     const updatedGame = await Game.findOneAndUpdate(
       { _id: req.params.id, userId: req.user.userId },
       updateData,
@@ -101,6 +103,7 @@ exports.updateGame = async (req, res) => {
 
 exports.deleteGame = async (req, res) => {
   try {
+    // Delete by both id and owner for the same isolation guarantee as updates.
     const deletedGame = await Game.findOneAndDelete({
       _id: req.params.id,
       userId: req.user.userId,

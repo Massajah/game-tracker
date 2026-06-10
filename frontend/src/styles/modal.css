@@ -16,8 +16,8 @@
 .game-modal {
   background: white;
   width: 100%;
-  max-width: 840px;
-  max-height: 90vh;
+  max-width: 850px;
+  max-height: 92vh;
   overflow-y: auto;
   border-radius: 18px;
   position: relative;
@@ -29,7 +29,7 @@
 
 .game-modal-image {
   width: 100%;
-  height: 320px;
+  height: 300px;
   object-fit: cover;
   display: block;
 }

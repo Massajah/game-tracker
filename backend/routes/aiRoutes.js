@@ -1,19 +1,24 @@
 const express = require("express");
 const OpenAI = require("openai");
+const Game = require("../models/Game");
+const authMiddleware = require("../middleware/authMiddleware");
 
 const router = express.Router();
 const client = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
 
-router.post("/recommendations", async (req, res) => {
+router.post("/recommendations", authMiddleware, async (req, res) => {
   try {
     const {
-      games,
       randomSeed,
-      recentAIRecommendations,
-      selectedPlatforms,
+      recentAIRecommendations = [],
+      selectedPlatforms = [],
     } = req.body;
+
+    const games = await Game.find({ userId: req.user.userId }).sort({
+      createdAt: -1,
+    });
 
     const completed = games
       .filter((game) => game.status === "completed")
@@ -33,6 +38,7 @@ router.post("/recommendations", async (req, res) => {
 
     const allOwnedOrTracked = games.map((game) => game.title);
 
+    // The prompt is the full recommendation contract; the model has no app-side memory.
     const prompt = `
 You are a video game recommendation assistant.
 
@@ -102,6 +108,7 @@ Keep it concise.
     let recommendation;
 
     try {
+      // Keep the API response strict so the React card can render deterministic fields.
       recommendation = JSON.parse(response.output_text);
     } catch {
       return res.status(500).json({

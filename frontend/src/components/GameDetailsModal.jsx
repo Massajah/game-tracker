@@ -57,6 +57,7 @@ function GameDetailsModal({
       return;
     }
 
+    // Reset transient modal state only when a different library or preview game opens.
     const modalGameKey = `${game.isPreview ? "preview" : "library"}-${game._id || game.rawgId
       }`;
 
@@ -146,6 +147,7 @@ function GameDetailsModal({
     setIsSaving(false);
   };
 
+  // addFromAPI expects the RAWG result shape, so preview data is adapted back to it.
   const previewGameForAdd = {
     name: game.title,
     id: game.rawgId,
@@ -164,6 +166,7 @@ function GameDetailsModal({
   };
 
   const handlePreviewAdd = async (selectedStatus) => {
+    // Ref gate prevents double-submit before the disabled button state renders.
     if (addInFlightRef.current) return;
 
     addInFlightRef.current = true;

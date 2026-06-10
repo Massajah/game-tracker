@@ -2,7 +2,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import StatusBadge from "../components/StatusBadge";
 import { getOptimizedImage } from "../utils/images";
 
-function HomePage({ games, openGameDetails, fetchGames, selectedPlatforms }) {
+function HomePage({ games, openGameDetails, fetchGames, token, selectedPlatforms }) {
   const [aiRecommendation, setAiRecommendation] = useState(null);
   const [recentAIRecommendations, setRecentAIRecommendations] = useState([]);
   const [aiLoading, setAiLoading] = useState(false);
@@ -63,6 +63,7 @@ function HomePage({ games, openGameDetails, fetchGames, selectedPlatforms }) {
   const findRawgGame = (rawgData, title) => {
     const results = Array.isArray(rawgData?.results) ? rawgData.results : [];
 
+    // Prefer exact matches so fuzzy RAWG results do not replace the AI's title.
     return (
       results.find(
         (game) => game?.name?.toLowerCase() === title.toLowerCase()
@@ -94,13 +95,14 @@ function HomePage({ games, openGameDetails, fetchGames, selectedPlatforms }) {
       setAiAddFeedback(null);
       setIsAIRecommendationAdded(false);
 
+      // Send recommendation preferences; the backend loads the authenticated library.
       const res = await fetch(`${process.env.REACT_APP_API_URL}/ai/recommendations`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({
-          games,
           randomSeed: Date.now(),
           recentAIRecommendations,
           selectedPlatforms
@@ -114,6 +116,7 @@ function HomePage({ games, openGameDetails, fetchGames, selectedPlatforms }) {
 
       if (recommendation?.title) {
         try {
+          // AI returns text-only JSON, then RAWG enriches it for display and add-to-list data.
           const rawgRes = await fetch(
             `https://api.rawg.io/api/games?key=${process.env.REACT_APP_RAWG_API_KEY}&search=${encodeURIComponent(
               recommendation.title
@@ -141,6 +144,7 @@ function HomePage({ games, openGameDetails, fetchGames, selectedPlatforms }) {
 
       setAiRecommendation(recommendationWithImage);
 
+      // Keep a short local history so future prompts can avoid recent repeats.
       setRecentAIRecommendations((prev) => {
         const newTitle = recommendationWithImage?.title;
 
@@ -173,6 +177,7 @@ function HomePage({ games, openGameDetails, fetchGames, selectedPlatforms }) {
       let game;
 
       try {
+        // Re-resolve through RAWG before saving so the wishlist gets canonical metadata.
         const rawgRes = await fetch(
           `https://api.rawg.io/api/games?key=${process.env.REACT_APP_RAWG_API_KEY}&search=${encodeURIComponent(
             aiRecommendation.title
