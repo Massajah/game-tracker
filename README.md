@@ -4,7 +4,9 @@ A full-stack game library application for tracking games, managing personal coll
 
 GameTracker was built as a portfolio project to demonstrate full-stack web development skills. The goal was to create a real-world application that combines frontend development, backend APIs, databases, authentication, third-party integrations, and AI-powered features.
 
-🚀 Live demo: https://game-tracker-indol.vercel.app/
+## 🚀 Live demo
+
+https://game-tracker-indol.vercel.app/
 
 ## Features
 
@@ -54,9 +56,16 @@ External APIs:
 Authentication:
 - Google OAuth
 
-## Screenshots:
+## Screenshots
 
-(Screenshots coming later)
+### Home Page
+![Home Page](screenshots/home.png)
+
+### Game Details & Reviews
+![Game Details](screenshots/completed.png)
+
+### Settings
+![Settings](screenshots/settings.png)
 
 ## Installation
 
