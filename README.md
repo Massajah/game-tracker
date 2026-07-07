@@ -8,6 +8,14 @@ GameTracker was built as a portfolio project to demonstrate full-stack web devel
 
 https://game-tracker-indol.vercel.app/
 
+## Demo Account
+
+Visitors can use **Continue as Demo** on the login page to explore GameTracker without registering. The demo account includes a populated library across wishlist, backlog, playing and completed games, with completed-game ratings and notes for Top Rated and AI recommendations.
+
+The demo library is restored each time the demo login endpoint is used, so changes made by visitors are not permanent. Default demo credentials are:
+- Email: demo@gametracker.app
+- Password: Demo123!
+
 ## Features
 
 - Search and add games using the RAWG API
@@ -17,6 +25,7 @@ https://game-tracker-indol.vercel.app/
 - Platform ownership tracking
 - User authentication with JWT
 - Google login support
+- Demo account for recruiters and visitors
 - Customizable user settings
 - Light and dark mode
 - Responsive mobile-friendly design
@@ -86,10 +95,13 @@ Frontend:
 ## Environment Variables
 
 Backend:
-- MONGODB_URI=
+- MONGO_URI=
 - JWT_SECRET=
 - OPENAI_API_KEY=
 - GOOGLE_CLIENT_ID=
+- DEMO_EMAIL=
+- DEMO_PASSWORD=
+- DEMO_USERNAME=
 
 Frontend:
 - REACT_APP_API_URL=

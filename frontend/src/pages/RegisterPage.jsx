@@ -75,8 +75,8 @@ function RegisterPage() {
           />
           <h1 className="auth-title">Create account</h1>
           <div className="auth-subtitle">
-            <span>Welcome!</span>
-            <span>Create account to start building your library.</span>
+
+            <span>Welcome! Create account to start building your library.</span>
           </div>
 
           {error && <div className="auth-error">{error}</div>}

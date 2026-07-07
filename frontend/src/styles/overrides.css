@@ -1,16 +1,16 @@
 .google-login-wrapper {
   display: flex;
   justify-content: center;
-  margin: 12px 0;
+  margin: 6px 0;
 }
 
 .auth-divider {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
   color: #5e5e5e;
   font-size: 0.9rem;
-  margin: 6px 0;
+  margin: 4px 0;
 }
 
 .auth-divider::before,
@@ -43,7 +43,7 @@
 
 .google-login-wrapper {
   width: 100%;
-  margin-bottom: 18px;
+  margin: 4px 0 6px;
 }
 
 .google-login-wrapper>div {
@@ -51,7 +51,7 @@
 }
 
 .auth-divider {
-  margin: 16px 0;
+  margin: 5px 0;
   font-size: 0.8rem;
   opacity: 0.7;
 }
@@ -73,10 +73,10 @@
 }
 
 .auth-card {
-  width: 440px;
+  width: 420px;
   max-width: 100%;
-  padding: 40px;
-  border-radius: 24px;
+  padding: 30px;
+  border-radius: 22px;
   background: white;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
 }
@@ -93,7 +93,19 @@
 @media (max-width: 768px) {
   .auth-card {
     width: 100%;
-    padding: 28px;
+    min-width: 0;
+    padding: 24px;
+  }
+
+  .auth-page,
+  .auth-form-side,
+  .auth-hero {
+    max-width: 100%;
+    overflow-x: hidden;
+  }
+
+  .auth-hero h1 span {
+    display: block;
   }
 }
 

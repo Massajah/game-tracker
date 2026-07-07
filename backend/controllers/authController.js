@@ -1,6 +1,7 @@
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const User = require("../models/User");
+const { ensureDemoAccount } = require("../utils/demoAccount");
 const { OAuth2Client } = require("google-auth-library");
 
 const googleClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
@@ -11,6 +12,13 @@ const createToken = (userId) => {
     expiresIn: "7d",
   });
 };
+
+const toAuthUser = (user, extra = {}) => ({
+  id: user._id,
+  username: user.username,
+  email: user.email,
+  ...extra,
+});
 
 exports.register = async (req, res) => {
   try {
@@ -40,11 +48,7 @@ exports.register = async (req, res) => {
 
     res.status(201).json({
       token,
-      user: {
-        id: user._id,
-        username: user.username,
-        email: user.email,
-      },
+      user: toAuthUser(user),
     });
   } catch {
     res.status(500).json({ error: "Registration failed" });
@@ -75,14 +79,24 @@ exports.login = async (req, res) => {
 
     res.json({
       token,
-      user: {
-        id: user._id,
-        username: user.username,
-        email: user.email,
-      },
+      user: toAuthUser(user),
     });
   } catch {
     res.status(500).json({ error: "Login failed" });
+  }
+};
+
+exports.demoLogin = async (req, res) => {
+  try {
+    const user = await ensureDemoAccount();
+    const token = createToken(user._id);
+
+    res.json({
+      token,
+      user: toAuthUser(user, { isDemo: true }),
+    });
+  } catch {
+    res.status(500).json({ error: "Demo login failed" });
   }
 };
 
@@ -129,11 +143,7 @@ exports.googleLogin = async (req, res) => {
 
     res.json({
       token,
-      user: {
-        id: user._id,
-        username: user.username,
-        email: user.email,
-      },
+      user: toAuthUser(user),
     });
   } catch {
     res.status(401).json({ error: "Google login failed" });
@@ -171,11 +181,7 @@ exports.updateProfile = async (req, res) => {
     ).select("-password");
 
     res.json({
-      user: {
-        id: user._id,
-        username: user.username,
-        email: user.email,
-      },
+      user: toAuthUser(user),
     });
   } catch (error) {
     res.status(500).json({
